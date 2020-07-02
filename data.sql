@@ -9,7 +9,6 @@ CREATE TABLE usuario(
     nombre VARCHAR(50) NOT NULL,
     saldo DECIMAL(14,2) DEFAULT 0,
     correo VARCHAR(50) NOT NULL,
-    contrasena VARCHAR(64) NOT NULL,
     idValidador VARCHAR(64) DEFAULT NULL,
     bloqAprobados INT DEFAULT 0,
     bloqPropuestos INT DEFAULT 0,
@@ -19,16 +18,16 @@ CREATE TABLE usuario(
 );
 
 
-INSERT INTO usuario (nombre, correo, contrasena) VALUES 
-('Usuario 1','correo 1','correo 1'),
-('Usuario 2','correo 2','correo 1'),
-('Usuario 3','correo 3','correo 1'),
-('Usuario 4','correo 4','correo 1'),
-('Usuario 5','correo 5','correo 1'),
-('Usuario 6','correo 6','correo 1'),
-('Usuario 7','correo 7','correo 1'),
-('Usuario 8','correo 8','correo 1'),
-('Usuario 9','correo 9','correo 1');
+INSERT INTO usuario (nombre, correo) VALUES 
+('Usuario 1','correo 1'),
+('Usuario 2','correo 2'),
+('Usuario 3','correo 3'),
+('Usuario 4','correo 4'),
+('Usuario 5','correo 5'),
+('Usuario 6','correo 6'),
+('Usuario 7','correo 7'),
+('Usuario 8','correo 8'),
+('Usuario 9','correo 9');
 
 
 
