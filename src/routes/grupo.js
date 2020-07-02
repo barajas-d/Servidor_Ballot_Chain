@@ -28,6 +28,30 @@ router.get('/grupo/:id', cors(corsOptionsDelegate), (req, res) => {
     })
 });
 
+router.get('/grupo/miembros/:id', cors(corsOptionsDelegate), (req, res) => {
+    const { id } = req.params;
+    mysqlConnection.query('SELECT * FROM usuario AS t1 INNER JOIN miembro AS t2 WHERE t1.nombre = t2.idUsuario AND t2.idGrupo = ?', [id],  (err, rows, fields) => {
+        if(!err){
+            res.json(rows);
+        }
+        else{
+            console.log('error en dataBase');
+        }
+    })
+});
+
+router.get('/grupo/pendientes/:id', cors(corsOptionsDelegate), (req, res) => {
+    const { id } = req.params;
+    mysqlConnection.query('SELECT * FROM usuario AS t1 INNER JOIN pendientes AS t2 WHERE t1.nombre = t2.idUsuario AND t2.idGrupo = ?', [id],  (err, rows, fields) => {
+        if(!err){
+            res.json(rows);
+        }
+        else{
+            console.log('error en dataBase');
+        }
+    })
+});
+
 router.post('/grupoAdd', cors(corsOptionsDelegate), (req, res) => {
     const { nombre, descripcion, creador } = req.body;
     const query = "INSERT INTO grupo (nombre, descripcion, creador) VALUES (?, ?, ?)";
