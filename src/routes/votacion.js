@@ -75,6 +75,16 @@ router.delete('/votacionDelete', cors(corsOptionsDelegate), (req, res) => {
     })
 });
 
-
+router.get('/votacionAutor/:nombre', cors(corsOptionsDelegate), (req, res) => {
+    const { nombre } = req.params;
+    mysqlConnection.query('SELECT * FROM votacion WHERE autor = ?', [nombre],  (err, rows, fields) => {
+        if(!err){
+            res.json(rows);
+        }
+        else{
+            console.log(err);
+        }
+    })
+});
 
 module.exports = router;
