@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS employess;
 DROP TABLE IF EXISTS opcion;
 DROP TABLE IF EXISTS votacion;
 DROP TABLE IF EXISTS tipoVotacion;
-
+DROP TABLE IF EXISTS usuario;
 CREATE TABLE employess(
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(200) DEFAULT NULL,
@@ -51,6 +51,23 @@ votacion INT NOT NULL,
 PRIMARY KEY(id),
 FOREIGN KEY(votacion) REFERENCES votacion(id)
 );
+
+CREATE TABLE usuario(
+    nombre VARCHAR(50) NOT NULL,
+    saldo DECIMAL(14,2) DEFAULT 0,
+    correo VARCHAR(50) DEFAULT NULL,##NOT NULL
+    contrasena VARCHAR(64)DEFAULT NULL,
+    idValidador VARCHAR(64) DEFAULT NULL,
+    bloqAprobados INT DEFAULT 0,
+    bloqPropuestos INT DEFAULT 0,
+    bloqRevisados INT DEFAULT 0,
+    bloqValidados INT DEFAULT 0,
+    PRIMARY KEY(nombre)
+);
+
+INSERT INTO usuario ( nombre, correo, contrasena ) VALUES ('Santiago', 'jaj', '1234');
+
+
 INSERT INTO tipoVotacion (id, nombre) VALUES ( 1, 'Ranking');
 INSERT INTO tipoVotacion (id, nombre) VALUES ( 2, 'Popular');
 INSERT INTO tipoVotacion (id, nombre) VALUES ( 3, 'Clasificacion');
@@ -86,4 +103,5 @@ SELECT * FROM  opcion;
 SELECT * FROM  votacion;
 SELECT * FROM  tipoDeVotacion;
 SELECT * FROM  credencial;
+SELECT * FROM  usuario;
 ##SELECT * FROM credencial WHERE id = 1 AND isValid = False;
