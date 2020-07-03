@@ -30,16 +30,17 @@ router.get('/votacion/:id', cors(corsOptionsDelegate), (req, res) => {
 });
 
 router.post('/votacionAdd', cors(corsOptionsDelegate), (req, res) => {
-    const { fecha, tipoVotacion, descripcion, votos } = req.body;
-    const query = "INSERT INTO votacion (fechaLimite, tipoDeVotacion, descripcion, votos) VALUES (?, ?, ?, votos)";
+    const { fecha, tipoVotacion, descripcion, votos} = req.body;
+    const query = "INSERT INTO votacion (fechaLimite, tipoDeVotacion, descripcion, votos) VALUES (?, ?, ?, ?)";
     mysqlConnection.query(query, [fecha, tipoVotacion, descripcion, votos], (err, rows, fields) => {
         if(!err){
-            res.json({Status: 'Votacion guardada'});
+            res.json({Status: rows.id});
         } else {
             console.log(err);
         }
     });
 });
+
 
 router.put('/votacionPut', cors(corsOptionsDelegate), (req, res) => {
     const { id, fecha, tipoVotacion, descripcion, votos } = req.body;
@@ -75,6 +76,16 @@ router.delete('/votacionDelete', cors(corsOptionsDelegate), (req, res) => {
     })
 });
 
-
+router.get('/votacionAutor/:nombre', cors(corsOptionsDelegate), (req, res) => {
+    const { nombre } = req.params;
+    mysqlConnection.query('SELECT * FROM votacion WHERE autor = ?', [nombre],  (err, rows, fields) => {
+        if(!err){
+            res.json(rows);
+        }
+        else{
+            console.log(err);
+        }
+    })
+});
 
 module.exports = router;
