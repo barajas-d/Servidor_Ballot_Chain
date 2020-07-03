@@ -1,5 +1,6 @@
 CREATE DATABASE IF NOT EXISTS ballot_chain;
 USE ballot_chain;
+DROP TABLE IF EXISTS credencial;
 DROP TABLE IF EXISTS employess;
 DROP TABLE IF EXISTS opcion;
 DROP TABLE IF EXISTS votacion;
@@ -41,6 +42,15 @@ CREATE TABLE opcion(
     votacion INT NOT NULL,
     FOREIGN KEY(votacion) REFERENCES votacion(id)
 );
+
+CREATE TABLE  credencial(
+id INT NOT NULL AUTO_INCREMENT,
+clave VARCHAR(200) NOT NULL,
+isValid boolean NOT NULL,
+votacion INT NOT NULL,
+PRIMARY KEY(id),
+FOREIGN KEY(votacion) REFERENCES votacion(id)
+);
 INSERT INTO tipoVotacion (id, nombre) VALUES ( 1, 'Ranking');
 INSERT INTO tipoVotacion (id, nombre) VALUES ( 2, 'Popular');
 INSERT INTO tipoVotacion (id, nombre) VALUES ( 3, 'Clasificacion');
@@ -64,8 +74,16 @@ INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (8, 'Diego', 'Opci
 INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (9, 'Brandonn', 'Opcion de ejemplo', 3);
 INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (10, 'Santiago', 'Opcion de ejemplo', 3);
 INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (11, 'Briam', 'Opcion de ejemplo', 3);
+
+INSERT INTO credencial (id, clave, isValid, votacion) VALUES(1,'abc',True, 1);
+INSERT INTO credencial (id, clave, isValid, votacion) VALUES(2,'def',True, 2);
+INSERT INTO credencial (id, clave, isValid, votacion) VALUES(3,'ghi',True, 3);
+INSERT INTO credencial (id, clave, isValid, votacion) VALUES(4,'jkl',False, 1);
+
+
 SELECT * FROM employess;
 SELECT * FROM  opcion;
 SELECT * FROM  votacion;
 SELECT * FROM  tipoDeVotacion;
-
+SELECT * FROM  credencial;
+##SELECT * FROM credencial WHERE id = 1 AND isValid = False;
