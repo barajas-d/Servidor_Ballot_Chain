@@ -47,4 +47,21 @@ router.get('/participanteVotacionNum/:id', cors(corsOptionsDelegate), (req, res)
     })
 });
 
+router.get('/participanteDelete/:id/:nombre', cors(corsOptionsDelegate), (req, res) => {
+    const { id, nombre } = req.params;
+    const query = "DELETE FROM participante WHERE id = ? AND nombre = ?";
+    mysqlConnection.query(query, [id, nombre], (err, rows) => {
+        if(!err){
+            if(rows.affectedRows == 0){
+                res.json({Status: 'No existe la votacion ' + id + ' o el usuario ' + nombre});
+            }
+            else{
+                res.json({Status: 'Usuario ' + nombre + ' eliminado de la votacion ' + id});
+            }
+        } else {
+            console.log(err);
+        }
+    })
+});
+
 module.exports = router;
