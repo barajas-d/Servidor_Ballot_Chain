@@ -10,6 +10,7 @@ app.use(express.json());
 //Rutas
 app.use(require('./routes/employees'));
 app.use(require('./routes/votacion'));
+app.use(require('./routes/grupo'));
 app.use(require('./routes/participante'));
 app.use(require('./routes/opcion'));
 app.use(require('./routes/credencial'));
