@@ -6,16 +6,7 @@ DROP TABLE IF EXISTS opcion;
 DROP TABLE IF EXISTS votacion;
 DROP TABLE IF EXISTS tipoVotacion;
 DROP TABLE IF EXISTS usuario;
-CREATE TABLE employess(
-    id INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(200) DEFAULT NULL,
-    salary INT DEFAULT NULL,
-    PRIMARY KEY(id)
-);
 
-INSERT INTO employess (name, salary) values ('pepito', 10000);
-INSERT INTO employess (name, salary) values ('juanito', 20000);
-INSERT INTO employess (name, salary) values ('juanito', 300000);
 
 CREATE TABLE tipoVotacion(
     id INT NOT NULL AUTO_INCREMENT,
@@ -23,6 +14,7 @@ CREATE TABLE tipoVotacion(
     nombre VARCHAR(200) DEFAULT NULL,
     PRIMARY KEY(id)
 );
+
 
 CREATE TABLE votacion(
     id INT NOT NULL AUTO_INCREMENT,
@@ -33,6 +25,7 @@ CREATE TABLE votacion(
     votos INT DEFAULT 1,
     PRIMARY KEY(id),
     FOREIGN KEY(tipoDeVotacion) REFERENCES tipoVotacion(id)
+
 );
 CREATE TABLE opcion(
     id INT NOT NULL AUTO_INCREMENT,
@@ -40,6 +33,7 @@ CREATE TABLE opcion(
     nombre VARCHAR(200) DEFAULT NULL,
     PRIMARY KEY(id),
     votacion INT NOT NULL,
+    identificacion VARCHAR(200) DEFAULT NULL, 
     FOREIGN KEY(votacion) REFERENCES votacion(id)
 );
 
@@ -64,6 +58,7 @@ CREATE TABLE usuario(
     bloqValidados INT DEFAULT 0,
     PRIMARY KEY(nombre)
 );
+
 
 INSERT INTO usuario ( nombre, correo, contrasena ) VALUES ('Santiago', 'jaj', '1234');
 
@@ -92,10 +87,22 @@ INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (9, 'Brandonn', 'O
 INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (10, 'Santiago', 'Opcion de ejemplo', 3);
 INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (11, 'Briam', 'Opcion de ejemplo', 3);
 
+
 INSERT INTO credencial (id, clave, isValid, votacion) VALUES(1,'abc',True, 1);
 INSERT INTO credencial (id, clave, isValid, votacion) VALUES(2,'def',True, 2);
 INSERT INTO credencial (id, clave, isValid, votacion) VALUES(3,'ghi',True, 3);
 INSERT INTO credencial (id, clave, isValid, votacion) VALUES(4,'jkl',False, 1);
+
+
+
+
+INSERT INTO votacion (fechaLimite, tipoDeVotacion, descripcion) VALUES ('2020-10-20', 1, 'ejemplo votacion popular');
+INSERT INTO votacion (fechaLimite, tipoDEVotacion, descripcion) VALUES ('2020-10-20', 1, 'ejemplo votacion ranking');
+INSERT INTO votacion (fechaLimite, tipoDEVotacion, descripcion) VALUES ('2020-10-20', 1, 'ejemplo votacion clasificacion');
+
+INSERT INTO opcion (idVotacion, nombre, descripcion, identificacion) VALUES (1, 'candidato 1', 'Descripcion', '123');
+INSERT INTO opcion (idVotacion, nombre, descripcion, identificacion) VALUES (1, 'candidato 2', 'Descripcion', '456');
+INSERT INTO opcion (idVotacion, nombre, descripcion, identificacion) VALUES (2, 'candidato 1', 'Descripcion', '789');
 
 
 SELECT * FROM employess;
@@ -105,3 +112,4 @@ SELECT * FROM  tipoDeVotacion;
 SELECT * FROM  credencial;
 SELECT * FROM  usuario;
 ##SELECT * FROM credencial WHERE id = 1 AND isValid = False;
+
