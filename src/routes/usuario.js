@@ -46,4 +46,19 @@ router.put('/usuarioPut/:nombreId', cors(corsOptionsDelegate), (req, res) => {
     });
 });
 
+router.post('/usuarioAdd', cors(corsOptionsDelegate), (req, res) => {
+    console.log("llegue----------------------------------------------------");
+    console.log(req.body);
+    console.log("----------------------------------------------------------")
+    const {  nombre, correo, contrasena } = req.body;
+    const query = "INSERT INTO usuario ( nombre, correo, contrasena ) VALUES (?, ?, ?)";
+    mysqlConnection.query(query, [nombre, correo, contrasena], (err, rows, fields) => {
+        if(!err){
+            res.json({Status: 'Votacion guardada'});
+        } else {
+            console.log(err);
+        }
+    });
+});
+
 module.exports = router;

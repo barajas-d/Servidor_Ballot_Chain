@@ -1,24 +1,13 @@
 CREATE DATABASE IF NOT EXISTS ballot_chain;
-
-DROP TABLE IF EXISTS employess;
+USE ballot_chain;
+DROP TABLE IF EXISTS credencial;
 DROP TABLE IF EXISTS participante;
-DROP TABLE IF EXISTS votacion;
 DROP TABLE IF EXISTS opcion;
+DROP TABLE IF EXISTS votacion;
+DROP TABLE IF EXISTS tipoVotacion;
 DROP TABLE IF EXISTS usuario;
 
-CREATE TABLE employess(
-    id INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(200) DEFAULT NULL,
-    salary INT DEFAULT NULL,
-    PRIMARY KEY(id)
-);
-
-INSERT INTO employess (name, salary) values ('pepito', 10000);
-INSERT INTO employess (name, salary) values ('juanito', 20000);
-INSERT INTO employess (name, salary) values ('juanito', 300000);
-
-
-CREATE TABLE opcion(
+CREATE TABLE tipoVotacion(
     id INT NOT NULL AUTO_INCREMENT,
     descripcion VARCHAR(200) DEFAULT NULL,
     nombre VARCHAR(200) DEFAULT NULL,
@@ -40,7 +29,7 @@ CREATE TABLE usuario(
 
 CREATE TABLE votacion(
     id INT NOT NULL AUTO_INCREMENT,
-    titulo VARCHAR(50) NOT NULL,
+    titulo VARCHAR(50) DEFAULT NULL,
     autor VARCHAR(50) NOT NULL,
     fechaLimite DATE NOT NULL,
     plantillaAsociada INT DEFAULT NULL,
@@ -49,7 +38,7 @@ CREATE TABLE votacion(
     votos INT DEFAULT 1,
     PRIMARY KEY(id),
     FOREIGN KEY(autor) REFERENCES usuario(nombre) ON UPDATE CASCADE,
-    FOREIGN KEY(tipoDeVotacion) REFERENCES opcion(id)
+    FOREIGN KEY(tipoDeVotacion) REFERENCES tipoVotacion(id)
 );
 
 CREATE TABLE participante(
@@ -60,9 +49,57 @@ CREATE TABLE participante(
     FOREIGN KEY(nombre) REFERENCES usuario(nombre) ON UPDATE CASCADE
 );
 
-INSERT INTO opcion (id, nombre, descripcion) VALUES (1, 'Popular', 'Opcion de ejemplo');
-INSERT INTO opcion (id, nombre, descripcion) VALUES (2, 'Ranking', 'Opcion de ejemplo');
-INSERT INTO opcion (id, nombre, descripcion) VALUES (3, 'Clasificación', 'Opcion de ejemplo');
+CREATE TABLE opcion(
+    id INT NOT NULL AUTO_INCREMENT,
+    descripcion VARCHAR(200) DEFAULT NULL,
+    nombre VARCHAR(200) DEFAULT NULL,
+    PRIMARY KEY(id),
+    votacion INT NOT NULL,
+    identificacion VARCHAR(200) DEFAULT NULL, 
+    FOREIGN KEY(votacion) REFERENCES votacion(id)
+);
+
+CREATE TABLE  credencial(
+id INT NOT NULL AUTO_INCREMENT,
+clave VARCHAR(200) NOT NULL,
+isValid boolean NOT NULL,
+votacion INT NOT NULL,
+PRIMARY KEY(id),
+FOREIGN KEY(votacion) REFERENCES votacion(id)
+);
+
+INSERT INTO usuario ( nombre, correo, contrasena ) VALUES ('Santiago', 'jaj', '1234');
+
+
+INSERT INTO tipoVotacion (id, nombre) VALUES ( 1, 'Ranking');
+INSERT INTO tipoVotacion (id, nombre) VALUES ( 2, 'Popular');
+INSERT INTO tipoVotacion (id, nombre) VALUES ( 3, 'Clasificacion');
+
+
+INSERT INTO votacion (autor, titulo, id,fechaLimite, tipoDeVotacion, descripcion) VALUES ('Santiago', 'TituloVotacion', 1, '2020-10-20', 1, 'ejemplo votacion ranking');
+INSERT INTO votacion (autor, titulo, id, fechaLimite, tipoDEVotacion, descripcion, votos) VALUES ('Santiago', 'TituloVotacion', 2, '2020-10-20', 2, 'ejemplo votacion popular',20);
+INSERT INTO votacion (autor, titulo, id, fechaLimite, tipoDEVotacion, descripcion) VALUES ('Santiago', 'TituloVotacion', 3, '2020-10-20', 3, 'ejemplo votacion clasificacion');
+
+
+INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (1, 'Diego', 'Opcion de ejemplo', 1);
+INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (2, 'Santiago', 'Opcion de ejemplo', 1);
+INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (3, 'Brandonn', 'Opcion de ejemplo', 1);
+
+INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (4, 'Hernando', 'Opcion de ejemplo', 2);
+INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (5, 'Asaf', 'Opcion de ejemplo', 2);
+INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (6, 'Padi', 'Opcion de ejemplo', 2);
+INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (7, 'Santiago', 'Opcion de ejemplo', 2);
+
+INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (8, 'Diego', 'Opcion de ejemplo', 3);
+INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (9, 'Brandonn', 'Opcion de ejemplo', 3);
+INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (10, 'Santiago', 'Opcion de ejemplo', 3);
+INSERT INTO opcion (id, nombre, descripcion, votacion) VALUES (11, 'Briam', 'Opcion de ejemplo', 3);
+
+
+INSERT INTO credencial (id, clave, isValid, votacion) VALUES(1,'abc',True, 1);
+INSERT INTO credencial (id, clave, isValid, votacion) VALUES(2,'def',True, 2);
+INSERT INTO credencial (id, clave, isValid, votacion) VALUES(3,'ghi',True, 3);
+INSERT INTO credencial (id, clave, isValid, votacion) VALUES(4,'jkl',False, 1);
 
 INSERT INTO usuario (nombre, correo, contrasena) VALUES ('Alice', 'alice@gmail.com', '123');
 INSERT INTO usuario (nombre, correo, contrasena) VALUES ('Bob', 'bob@gmail.com', '123');
@@ -78,3 +115,20 @@ INSERT INTO participante (id, nombre) VALUES (1, 'Bob');
 INSERT INTO participante (id, nombre) VALUES (1, 'Brandonn');
 INSERT INTO participante (id, nombre) VALUES (2, 'Brandonn');
 INSERT INTO participante (id, nombre) VALUES (3, 'Brandonn');
+
+INSERT INTO votacion (autor, titulo, fechaLimite, tipoDeVotacion, descripcion) VALUES ('Santiago', 'TituloVotacion', '2020-10-20', 1, 'ejemplo votacion popular');
+INSERT INTO votacion (autor, titulo, fechaLimite, tipoDEVotacion, descripcion) VALUES ('Santiago', 'TituloVotacion', '2020-10-20', 1, 'ejemplo votacion ranking');
+INSERT INTO votacion (autor, titulo, fechaLimite, tipoDEVotacion, descripcion) VALUES ('Santiago', 'TituloVotacion', '2020-10-20', 1, 'ejemplo votacion clasificacion');
+
+INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (1, 'candidato 1', 'Descripcion', '123');
+INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (1, 'candidato 2', 'Descripcion', '456');
+INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (2, 'candidato 1', 'Descripcion', '789');
+
+
+
+SELECT * FROM  opcion;
+SELECT * FROM  votacion;
+SELECT * FROM  tipoVotacion;
+SELECT * FROM  credencial;
+SELECT * FROM  usuario;
+##SELECT * FROM credencial WHERE id = 1 AND isValid = False;
