@@ -1,7 +1,6 @@
 CREATE DATABASE IF NOT EXISTS ballot_chain;
 USE ballot_chain;
 DROP TABLE IF EXISTS credencial;
-DROP TABLE IF EXISTS employess;
 DROP TABLE IF EXISTS opcion;
 DROP TABLE IF EXISTS votacion;
 DROP TABLE IF EXISTS tipoVotacion;
@@ -100,12 +99,12 @@ INSERT INTO votacion (fechaLimite, tipoDeVotacion, descripcion) VALUES ('2020-10
 INSERT INTO votacion (fechaLimite, tipoDEVotacion, descripcion) VALUES ('2020-10-20', 1, 'ejemplo votacion ranking');
 INSERT INTO votacion (fechaLimite, tipoDEVotacion, descripcion) VALUES ('2020-10-20', 1, 'ejemplo votacion clasificacion');
 
-INSERT INTO opcion (idVotacion, nombre, descripcion, identificacion) VALUES (1, 'candidato 1', 'Descripcion', '123');
-INSERT INTO opcion (idVotacion, nombre, descripcion, identificacion) VALUES (1, 'candidato 2', 'Descripcion', '456');
-INSERT INTO opcion (idVotacion, nombre, descripcion, identificacion) VALUES (2, 'candidato 1', 'Descripcion', '789');
+INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (1, 'candidato 1', 'Descripcion', '123');
+INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (1, 'candidato 2', 'Descripcion', '456');
+INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (2, 'candidato 1', 'Descripcion', '789');
 
 
-SELECT * FROM employess;
+
 SELECT * FROM  opcion;
 SELECT * FROM  votacion;
 SELECT * FROM  tipoDeVotacion;
