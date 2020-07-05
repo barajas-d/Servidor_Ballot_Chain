@@ -5,6 +5,17 @@ const router = express.Router();
 const mysqlConnection = require('../dataBase');
 const corsOptionsDelegate = require('../cors');
 
+router.get('/iniciarSesion', cors(corsOptionsDelegate), (req, res) => {
+    mysqlConnection.query('SELECT * FROM usuario', (err, rows) => {
+        if(!err){
+            res.json(rows);
+        }
+        else{
+            console.log('error en dataBase');
+        }
+    })
+});
+
 router.get('/usuario', cors(corsOptionsDelegate), (req, res) => {
     mysqlConnection.query('SELECT * FROM usuario', (err, rows) => {
         if(!err){
