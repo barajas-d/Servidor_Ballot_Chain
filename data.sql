@@ -189,9 +189,9 @@ INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (1, 'c
 INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (2, 'candidato 1', 'Descripcion', '789');
 
 
-##SELECT * FROM  opcion;
-##SELECT * FROM  votacion;
-##SELECT * FROM  tipoVotacion;
-##SELECT * FROM  credencial;
-##SELECT * FROM  usuario;
-##SELECT * FROM credencial WHERE id = 1 AND isValid = False;
+SELECT * FROM  opcion;
+SELECT * FROM  votacion;
+SELECT * FROM  tipoVotacion;
+SELECT * FROM  credencial;
+SELECT * FROM  usuario;
+SELECT * FROM usuario WHERE nombre = 'lal' AND contrasena = 'lal'
