@@ -3,7 +3,8 @@ const mysql = require('mysql');
 const mysqlConnection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    database: 'ballot_chain'
+    database: 'ballot_chain',
+    port: 3307
 });
 
 mysqlConnection.connect(function (err){
