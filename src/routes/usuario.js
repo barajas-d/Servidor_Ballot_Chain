@@ -5,6 +5,7 @@ const mysqlConnection = require('../dataBase');
 const corsOptionsDelegate = require('../cors');
 const jwt= require('jsonwebtoken')
 
+
 const secretKey= '123456789'
 
 router.post('/iniciarSesion', cors(corsOptionsDelegate), (req, res) => {
