@@ -177,12 +177,24 @@ INSERT INTO votacion (fechaLimite, titulo, autor, tipoDeVotacion, descripcion) V
 INSERT INTO votacion (fechaLimite, titulo, autor, tipoDEVotacion, descripcion) VALUES ('2020-10-20', 'Votacion 2','Brandonn', 1, 'ejemplo votacion ranking');
 INSERT INTO votacion (fechaLimite, titulo, autor, tipoDEVotacion, descripcion) VALUES ('2020-10-20', 'Votacion 3','Alice', 1, 'ejemplo votacion clasificacion');
 
-INSERT INTO participante (id, nombre) VALUES (1, 'Alice');
-INSERT INTO participante (id, nombre) VALUES (3, 'Alice');
-INSERT INTO participante (id, nombre) VALUES (1, 'Bob');
-INSERT INTO participante (id, nombre) VALUES (1, 'Brandonn');
-INSERT INTO participante (id, nombre) VALUES (2, 'Brandonn');
-INSERT INTO participante (id, nombre) VALUES (3, 'Brandonn');
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Diego', 'Opcion de ejemplo', 4);
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Santiago', 'Opcion de ejemplo', 4);
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Brandonn', 'Opcion de ejemplo', 4);
+
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Diego', 'Opcion de ejemplo', 5);
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Santiago', 'Opcion de ejemplo', 5);
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Brandonn', 'Opcion de ejemplo', 5);
+
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Diego', 'Opcion de ejemplo', 6);
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Santiago', 'Opcion de ejemplo', 6);
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Brandonn', 'Opcion de ejemplo', 6);
+
+INSERT INTO participante (id, nombre) VALUES (4, 'Alice');
+INSERT INTO participante (id, nombre) VALUES (6, 'Alice');
+INSERT INTO participante (id, nombre) VALUES (4, 'Bob');
+INSERT INTO participante (id, nombre) VALUES (4, 'Brandonn');
+INSERT INTO participante (id, nombre) VALUES (5, 'Brandonn');
+INSERT INTO participante (id, nombre) VALUES (6, 'Brandonn');
 
 INSERT INTO votacion (autor, titulo, fechaLimite, tipoDeVotacion, descripcion) VALUES ('Santiago', 'TituloVotacion', '2020-10-20', 1, 'ejemplo votacion popular');
 INSERT INTO votacion (autor, titulo, fechaLimite, tipoDEVotacion, descripcion) VALUES ('Santiago', 'TituloVotacion', '2020-10-20', 1, 'ejemplo votacion ranking');
@@ -190,4 +202,13 @@ INSERT INTO votacion (autor, titulo, fechaLimite, tipoDEVotacion, descripcion) V
 
 INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (1, 'candidato 1', 'Descripcion', '123');
 INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (1, 'candidato 2', 'Descripcion', '456');
+
 INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (2, 'candidato 1', 'Descripcion', '789');
+
+
+SELECT * FROM  opcion;
+SELECT * FROM  votacion;
+SELECT * FROM  tipoVotacion;
+SELECT * FROM  credencial;
+SELECT * FROM  usuario;
+SELECT * FROM usuario WHERE nombre = 'lal' AND contrasena = 'lal'
