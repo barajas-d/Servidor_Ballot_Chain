@@ -35,14 +35,14 @@ CREATE TABLE usuario(
 CREATE TABLE votacion(
     id INT NOT NULL AUTO_INCREMENT,
     titulo VARCHAR(50) DEFAULT NULL,
-    autor VARCHAR(50) NOT NULL,
-    fechaLimite DATE NOT NULL,
+    autor VARCHAR(50) DEFAULT 'Santiago',
+    fechaLimite DATE DEFAULT NULL,
     plantillaAsociada INT DEFAULT NULL,
     tipoDeVotacion INT NOT NULL,
     descripcion VARCHAR(200) DEFAULT NULL,
     votos INT DEFAULT 1,
     PRIMARY KEY(id),
-    FOREIGN KEY(autor) REFERENCES usuario(nombre) ON UPDATE CASCADE,
+    ##FOREIGN KEY(autor) REFERENCES usuario(nombre) ON UPDATE CASCADE,
     FOREIGN KEY(tipoDeVotacion) REFERENCES tipoVotacion(id)
 );
 
@@ -65,12 +65,12 @@ CREATE TABLE opcion(
 );
 
 CREATE TABLE  credencial(
-id INT NOT NULL AUTO_INCREMENT,
-clave VARCHAR(200) NOT NULL,
-isValid boolean NOT NULL,
-votacion INT NOT NULL,
-PRIMARY KEY(id),
-FOREIGN KEY(votacion) REFERENCES votacion(id)
+  id INT NOT NULL AUTO_INCREMENT,
+  clave VARCHAR(200) DEFAULT NUll,
+  isValid boolean NOT NULL DEFAULT false,
+  votacion INT NOT NULL,
+  PRIMARY KEY(id),
+  FOREIGN KEY(votacion) REFERENCES votacion(id)
 );
 
 CREATE TABLE grupo (
@@ -98,6 +98,10 @@ CREATE TABLE pendiente (
   FOREIGN KEY (idUsuario) REFERENCES usuario (nombre) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (idGrupo) REFERENCES grupo (id) ON DELETE CASCADE ON UPDATE CASCADE
  );
+
+
+
+## Inserts ----------------------------------------------------------------------------------
 
 INSERT INTO usuario ( nombre, correo, contrasena ) VALUES ('Santiago', 'jaj', '1234');
 
@@ -187,11 +191,3 @@ INSERT INTO votacion (autor, titulo, fechaLimite, tipoDEVotacion, descripcion) V
 INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (1, 'candidato 1', 'Descripcion', '123');
 INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (1, 'candidato 2', 'Descripcion', '456');
 INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (2, 'candidato 1', 'Descripcion', '789');
-
-
-##SELECT * FROM  opcion;
-##SELECT * FROM  votacion;
-##SELECT * FROM  tipoVotacion;
-##SELECT * FROM  credencial;
-##SELECT * FROM  usuario;
-##SELECT * FROM credencial WHERE id = 1 AND isValid = False;
