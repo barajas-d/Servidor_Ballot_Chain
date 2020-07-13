@@ -228,5 +228,22 @@ router.delete('/pendiente/:idUsuario/:idGrupo', cors(corsOptionsDelegate), (req,
     })
 });
 
+router.delete('/pendiente/:id', cors(corsOptionsDelegate), (req, res) => {
+    const {id } = req.params;
+    const query = "DELETE FROM pendiente WHERE ? = idGrupo";
+    mysqlConnection.query(query, [id], (err, rows) => {
+        if(!err){
+            if(rows.affectedRows == 0){
+                res.json({Status: 'No existe el grupo ' + id});
+            }
+            else{
+                res.json({Status: 'Pendientes del grupo '+id+' eliminados '});
+            }
+        } else {
+            console.log(err);
+        }
+    })
+});
+
 module.exports = router;
 
