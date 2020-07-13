@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const router = express.Router();
-
+const crypto = require('crypto');
+const cryptoUpdateMd5 = "ballot_chain";
 const mysqlConnection = require('../dataBase');
 const corsOptionsDelegate = require('../cors');
 
@@ -30,13 +31,32 @@ router.get('/votacion/:id', cors(corsOptionsDelegate), (req, res) => {
 });
 
 router.post('/votacionAdd', cors(corsOptionsDelegate), (req, res) => {
-    const { fecha, tipoVotacion, descripcion, votos} = req.body;
+    const { fecha, tipoVotacion, descripcion, votos, cantCredenciales  } = req.body;
     const query = "INSERT INTO votacion (fechaLimite, tipoDeVotacion, descripcion, votos) VALUES (?, ?, ?, ?)";
     mysqlConnection.query(query, [fecha, tipoVotacion, descripcion, votos], (err, rows, fields) => {
-        if(!err){
-            res.json({Status: rows.id});
+        if(!err) {
+            if(cantCredenciales == undefined){
+                res.json({Status: "Votacion creada con exito", Id: rows["insertId"], Credenciales: 0});
+            }
+            else{
+                const queryCrearCredencial = "INSERT INTO credencial(votacion) VALUES (?)";
+                const queryActualizarCredencial = "UPDATE credencial SET clave = ?, isValid = ? where credencial.id = ?";
+                var respuesta = [];
+                var credencialPreProcesada;
+                var credencial;
+                for (let i = 0; i < cantCredenciales; i++) {
+                    mysqlConnection.query(queryCrearCredencial, [rows["insertId"]], (errCrear, rowsCrear) => {
+                        if(!errCrear) {
+                            credencialPreProcesada = rows["insertId"].toString() + rowsCrear["insertId"].toString();
+                            credencial = crypto.createHash('md5').update(credencialPreProcesada).digest("hex");
+                            mysqlConnection.query(queryActualizarCredencial, [credencial, true, rowsCrear['insertId']]);
+                        }
+                    });
+                }
+                res.json({Status: "Votacion creada con exito", Id: rows["insertId"], Credenciales: cantCredenciales});
+            }
         } else {
-            console.log(err);
+            res.json({Error: 'Error al crear la votacion'});
         }
     });
 });

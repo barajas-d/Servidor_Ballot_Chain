@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+ 
 
 //Configuracion acceso
 app.set('port', process.env.PORT || 3000);
@@ -15,6 +16,7 @@ app.use(require('./routes/participante'));
 app.use(require('./routes/opcion'));
 app.use(require('./routes/credencial'));
 app.use(require('./routes/usuario'));
+app.use(require('./routes/tipoVotacion'));
 //Iniciar
 app.listen(3000, () =>{
     console.log('Server on port', app.get('port'))

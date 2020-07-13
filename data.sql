@@ -35,14 +35,14 @@ CREATE TABLE usuario(
 CREATE TABLE votacion(
     id INT NOT NULL AUTO_INCREMENT,
     titulo VARCHAR(50) DEFAULT NULL,
-    autor VARCHAR(50) NOT NULL,
-    fechaLimite DATE NOT NULL,
+    autor VARCHAR(50) DEFAULT 'Santiago',
+    fechaLimite DATE DEFAULT NULL,
     plantillaAsociada INT DEFAULT NULL,
     tipoDeVotacion INT NOT NULL,
     descripcion VARCHAR(200) DEFAULT NULL,
     votos INT DEFAULT 1,
     PRIMARY KEY(id),
-    FOREIGN KEY(autor) REFERENCES usuario(nombre) ON UPDATE CASCADE,
+    ##FOREIGN KEY(autor) REFERENCES usuario(nombre) ON UPDATE CASCADE,
     FOREIGN KEY(tipoDeVotacion) REFERENCES tipoVotacion(id)
 );
 
@@ -65,12 +65,12 @@ CREATE TABLE opcion(
 );
 
 CREATE TABLE  credencial(
-id INT NOT NULL AUTO_INCREMENT,
-clave VARCHAR(200) NOT NULL,
-isValid boolean NOT NULL,
-votacion INT NOT NULL,
-PRIMARY KEY(id),
-FOREIGN KEY(votacion) REFERENCES votacion(id)
+  id INT NOT NULL AUTO_INCREMENT,
+  clave VARCHAR(200) DEFAULT NUll,
+  isValid boolean NOT NULL DEFAULT false,
+  votacion INT NOT NULL,
+  PRIMARY KEY(id),
+  FOREIGN KEY(votacion) REFERENCES votacion(id)
 );
 
 CREATE TABLE grupo (
@@ -98,6 +98,10 @@ CREATE TABLE pendiente (
   FOREIGN KEY (idUsuario) REFERENCES usuario (nombre) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (idGrupo) REFERENCES grupo (id) ON DELETE CASCADE ON UPDATE CASCADE
  );
+
+
+
+## Inserts ----------------------------------------------------------------------------------
 
 INSERT INTO usuario ( nombre, correo, contrasena ) VALUES ('Santiago', 'jaj', '1234');
 
@@ -173,12 +177,24 @@ INSERT INTO votacion (fechaLimite, titulo, autor, tipoDeVotacion, descripcion) V
 INSERT INTO votacion (fechaLimite, titulo, autor, tipoDEVotacion, descripcion) VALUES ('2020-10-20', 'Votacion 2','Brandonn', 1, 'ejemplo votacion ranking');
 INSERT INTO votacion (fechaLimite, titulo, autor, tipoDEVotacion, descripcion) VALUES ('2020-10-20', 'Votacion 3','Alice', 1, 'ejemplo votacion clasificacion');
 
-INSERT INTO participante (id, nombre) VALUES (1, 'Alice');
-INSERT INTO participante (id, nombre) VALUES (3, 'Alice');
-INSERT INTO participante (id, nombre) VALUES (1, 'Bob');
-INSERT INTO participante (id, nombre) VALUES (1, 'Brandonn');
-INSERT INTO participante (id, nombre) VALUES (2, 'Brandonn');
-INSERT INTO participante (id, nombre) VALUES (3, 'Brandonn');
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Diego', 'Opcion de ejemplo', 4);
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Santiago', 'Opcion de ejemplo', 4);
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Brandonn', 'Opcion de ejemplo', 4);
+
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Diego', 'Opcion de ejemplo', 5);
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Santiago', 'Opcion de ejemplo', 5);
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Brandonn', 'Opcion de ejemplo', 5);
+
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Diego', 'Opcion de ejemplo', 6);
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Santiago', 'Opcion de ejemplo', 6);
+INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Brandonn', 'Opcion de ejemplo', 6);
+
+INSERT INTO participante (id, nombre) VALUES (4, 'Alice');
+INSERT INTO participante (id, nombre) VALUES (6, 'Alice');
+INSERT INTO participante (id, nombre) VALUES (4, 'Bob');
+INSERT INTO participante (id, nombre) VALUES (4, 'Brandonn');
+INSERT INTO participante (id, nombre) VALUES (5, 'Brandonn');
+INSERT INTO participante (id, nombre) VALUES (6, 'Brandonn');
 
 INSERT INTO votacion (autor, titulo, fechaLimite, tipoDeVotacion, descripcion) VALUES ('Santiago', 'TituloVotacion', '2020-10-20', 1, 'ejemplo votacion popular');
 INSERT INTO votacion (autor, titulo, fechaLimite, tipoDEVotacion, descripcion) VALUES ('Santiago', 'TituloVotacion', '2020-10-20', 1, 'ejemplo votacion ranking');
@@ -186,12 +202,13 @@ INSERT INTO votacion (autor, titulo, fechaLimite, tipoDEVotacion, descripcion) V
 
 INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (1, 'candidato 1', 'Descripcion', '123');
 INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (1, 'candidato 2', 'Descripcion', '456');
+
 INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (2, 'candidato 1', 'Descripcion', '789');
 
 
-##SELECT * FROM  opcion;
-##SELECT * FROM  votacion;
-##SELECT * FROM  tipoVotacion;
-##SELECT * FROM  credencial;
-##SELECT * FROM  usuario;
-##SELECT * FROM credencial WHERE id = 1 AND isValid = False;
+SELECT * FROM  opcion;
+SELECT * FROM  votacion;
+SELECT * FROM  tipoVotacion;
+SELECT * FROM  credencial;
+SELECT * FROM  usuario;
+SELECT * FROM usuario WHERE nombre = 'lal' AND contrasena = 'lal'
