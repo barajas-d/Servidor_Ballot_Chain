@@ -1,9 +1,19 @@
 const express = require('express');
 const cors = require('cors');
 const router = express.Router();
-
 const mysqlConnection = require('../dataBase');
 const corsOptionsDelegate = require('../cors');
+const jwt = require('jsonwebtoken');
+
+const secretKey = '123456789'
+
+router.get('/log', verificarToken, cors(corsOptionsDelegate), (req, res) => {
+    console.log("Usuario logueado: " + req.userId);
+    res.json({
+        status: req.userId,
+        id: 0
+    })
+});
 
 router.get('/grupo', cors(corsOptionsDelegate), (req, res) => {
     mysqlConnection.query('SELECT * FROM grupo', (err, rows) => {
@@ -16,7 +26,7 @@ router.get('/grupo', cors(corsOptionsDelegate), (req, res) => {
     })
 });
 
-router.get('/grupo/:id', cors(corsOptionsDelegate), (req, res) => {
+router.get('/grupo/:id',cors(corsOptionsDelegate), (req, res) => {
     const { id } = req.params;
     mysqlConnection.query('SELECT * FROM grupo WHERE id = ?', [id],  (err, rows, fields) => {
         if(!err){
@@ -29,7 +39,7 @@ router.get('/grupo/:id', cors(corsOptionsDelegate), (req, res) => {
     })
 });
 
-router.post('/grupo', cors(corsOptionsDelegate), (req, res) => {
+router.post('/grupo',cors(corsOptionsDelegate), (req, res) => {
     const { nombre, descripcion, creador } = req.body;
     const query = "INSERT INTO grupo (nombre, descripcion, creador) VALUES (?, ?, ?)";
     mysqlConnection.query(query, [nombre, descripcion, creador], (err, rows, fields) => {
@@ -41,7 +51,7 @@ router.post('/grupo', cors(corsOptionsDelegate), (req, res) => {
     });
 });
 
-router.delete('/grupo/:id', cors(corsOptionsDelegate), (req, res) => {
+router.delete('/grupo/:id',cors(corsOptionsDelegate), (req, res) => {
     const { id } = req.params;
     const query = "DELETE FROM grupo WHERE ? = id";
     mysqlConnection.query(query, [id], (err, rows) => {
@@ -75,23 +85,7 @@ router.put('/grupo', cors(corsOptionsDelegate), (req, res) => {
     });
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-router.get('/usuario', cors(corsOptionsDelegate), (req, res) => {//esto es de usuario
+router.get('/usuario',cors(corsOptionsDelegate), (req, res) => {//esto es de usuario
     mysqlConnection.query('SELECT * FROM usuario', (err, rows) => {
         if(!err){
             res.json(rows);
@@ -102,7 +96,7 @@ router.get('/usuario', cors(corsOptionsDelegate), (req, res) => {//esto es de us
     })
 });
 
-router.get('/usuario/:nombre', cors(corsOptionsDelegate), (req, res) => {//esto es de usuario
+router.get('/usuario/:nombre',cors(corsOptionsDelegate), (req, res) => {//esto es de usuario
     const { nombre } = req.params;
     mysqlConnection.query('SELECT * FROM usuario WHERE nombre = ?', [nombre],  (err, rows, fields) => {
         if(!err){
@@ -114,9 +108,7 @@ router.get('/usuario/:nombre', cors(corsOptionsDelegate), (req, res) => {//esto 
     })
 });
 
-
-
-router.get('/miembro/grupo/:id', cors(corsOptionsDelegate), (req, res) => {
+router.get('/miembro/grupo/:id',cors(corsOptionsDelegate), (req, res) => {
     const { id } = req.params;
     mysqlConnection.query('SELECT * FROM usuario AS t1 INNER JOIN miembro AS t2 WHERE t1.nombre = t2.idUsuario AND t2.idGrupo = ?', [id],  (err, rows, fields) => {
         if(!err){
@@ -140,7 +132,7 @@ router.post('/miembro', cors(corsOptionsDelegate), (req, res) => {
     });
 });
 
-router.delete('/miembro/:idUsuario/:idGrupo', cors(corsOptionsDelegate), (req, res) => {
+router.delete('/miembro/:idUsuario/:idGrupo',cors(corsOptionsDelegate), (req, res) => {
     const { idUsuario, idGrupo } = req.params;
     const query = "DELETE FROM miembro WHERE ? = idUsuario AND ? = idGrupo";
     mysqlConnection.query(query, [idUsuario, idGrupo], (err, rows) => {
@@ -174,16 +166,6 @@ router.delete('/miembro/:id', cors(corsOptionsDelegate), (req, res) => {
     })
 });
 
-
-
-
-
-
-
-
-
-
-
 router.get('/pendiente/grupo/:id', cors(corsOptionsDelegate), (req, res) => {
     const { id } = req.params;
     mysqlConnection.query('SELECT * FROM usuario AS t1 INNER JOIN pendiente AS t2 WHERE t1.nombre = t2.idUsuario AND t2.idGrupo = ?', [id],  (err, rows, fields) => {
@@ -195,9 +177,6 @@ router.get('/pendiente/grupo/:id', cors(corsOptionsDelegate), (req, res) => {
         }
     })
 });
-
-
-
 
 router.post('/pendiente', cors(corsOptionsDelegate), (req, res) => {
     const { idUsuario, idGrupo} = req.body;
@@ -247,3 +226,19 @@ router.delete('/pendiente/:id', cors(corsOptionsDelegate), (req, res) => {
 
 module.exports = router;
 
+function verificarToken(req, res, next) {
+    console.log(req.headers.authorization);
+    if (!req.headers.authorization) {
+        return res.status(401).send('Solicitud no autorizada');
+    }
+    const token = req.headers.authorization.split(' ')[1];
+    if (token === 'null') {
+        return res.status(401).send('Solicitud no autorizada');
+    }
+    //console.log('token: '+ token)
+
+    const datos = jwt.verify(token, secretKey)
+    //console.log(datos);
+    req.userId = datos._id;
+    next();
+}
