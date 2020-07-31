@@ -52,17 +52,18 @@ router.get('/usuarioId', verificarToken, cors(corsOptionsDelegate), (req, res) =
     })
 });
 
-router.put('/usuarioPut/:nombreId', cors(corsOptionsDelegate), (req, res) => {
-    const { nombreId } = req.params;
+router.put('/usuarioPut', verificarToken, cors(corsOptionsDelegate), (req, res) => {
+    const nombreId = req.userId;
     const { nombre, saldo, correo } = req.body;
     const query = "UPDATE usuario SET nombre = ?, saldo = ?, correo = ? WHERE nombre = ?";
     mysqlConnection.query(query, [nombre, saldo, correo, nombreId], (err, rows, fields) => {
         if(!err){
             if(rows.affectedRows == 0){
-                res.json({Status: 'No existe el usuario ' + nombre});
+                res.json({Status: 'No existe el usuario ' + nombreId});
             }
             else{
-                res.json({Status: 'Usuario actualizado ' + nombre});
+                const token = jwt.sign({_id: nombre},secretKey);
+                res.json({Status: 'Usuario actualizado ' + nombreId, token});
             }
         } else {
             console.log(err);
