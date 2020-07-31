@@ -40,8 +40,8 @@ router.get('/usuario', cors(corsOptionsDelegate), (req, res) => {
     })
 });
 
-router.get('/usuario/:nombre', cors(corsOptionsDelegate), (req, res) => {
-    const { nombre } = req.params;
+router.get('/usuarioId', verificarToken, cors(corsOptionsDelegate), (req, res) => {
+    const nombre = req.userId;
     mysqlConnection.query('SELECT * FROM usuario WHERE nombre = ?', [nombre],  (err, rows, fields) => {
         if(!err){
             res.json(rows[0]);
@@ -88,10 +88,6 @@ router.post('/usuarioAdd', cors(corsOptionsDelegate), (req, res) => {
     });
 });
 
-
-
-
-module.exports = router;
 router.get('/privado', verificarToken,cors(corsOptionsDelegate), (req, res) => {
     console.log("id del usuario (por ahora es el nombre): "+req.userId);
     res.json({
@@ -113,15 +109,18 @@ function verificarToken(req, res, next)
         return res.status(401).send('Solicitud no autorizada');
     }
     const token = req.headers.authorization.split(' ')[1];
-    if(token === 'nul')
+    if(token == null)
     {
-        return res.status(401).send('Solicitud no autorizada');
+        return res.status(401).send('Solicitud no autorizada 2');
     }
-    //console.log('token: '+ token)
+    console.log('token: '+ token)
 
     const datos= jwt.verify(token, secretKey)
     //console.log(datos);
     req.userId= datos._id;
+    console.log(req.userId)
     next();
 
 }
+
+module.exports = router;
