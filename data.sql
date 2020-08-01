@@ -42,7 +42,7 @@ CREATE TABLE votacion(
     descripcion VARCHAR(200) DEFAULT NULL,
     votos INT DEFAULT 1,
     PRIMARY KEY(id),
-    ##FOREIGN KEY(autor) REFERENCES usuario(nombre) ON UPDATE CASCADE,
+    FOREIGN KEY(autor) REFERENCES usuario(nombre) ON UPDATE CASCADE,
     FOREIGN KEY(tipoDeVotacion) REFERENCES tipoVotacion(id)
 );
 
@@ -50,8 +50,8 @@ CREATE TABLE participante(
     id INT NOT NULL,
     nombre VARCHAR(50) NOT NULL,
     PRIMARY KEY(id, nombre),
-    FOREIGN KEY(id) REFERENCES votacion(id),
-    FOREIGN KEY(nombre) REFERENCES usuario(nombre) ON UPDATE CASCADE
+    FOREIGN KEY(id) REFERENCES votacion(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY(nombre) REFERENCES usuario(nombre) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE opcion(

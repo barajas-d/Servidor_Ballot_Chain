@@ -29,7 +29,7 @@ router.post('/iniciarSesion', cors(corsOptionsDelegate), (req, res) => {
     })
 });
 
-router.get('/usuario', cors(corsOptionsDelegate), (req, res) => {
+router.get('/usuario', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     mysqlConnection.query('SELECT * FROM usuario', (err, rows) => {
         if(!err){
             res.json(rows);
@@ -40,8 +40,8 @@ router.get('/usuario', cors(corsOptionsDelegate), (req, res) => {
     })
 });
 
-router.get('/usuario/:nombre', cors(corsOptionsDelegate), (req, res) => {
-    const { nombre } = req.params;
+router.get('/usuarioId', verificarToken, cors(corsOptionsDelegate), (req, res) => {
+    const nombre = req.userId;
     mysqlConnection.query('SELECT * FROM usuario WHERE nombre = ?', [nombre],  (err, rows, fields) => {
         if(!err){
             res.json(rows[0]);
@@ -52,17 +52,18 @@ router.get('/usuario/:nombre', cors(corsOptionsDelegate), (req, res) => {
     })
 });
 
-router.put('/usuarioPut/:nombreId', cors(corsOptionsDelegate), (req, res) => {
-    const { nombreId } = req.params;
+router.put('/usuarioPut', verificarToken, cors(corsOptionsDelegate), (req, res) => {
+    const nombreId = req.userId;
     const { nombre, saldo, correo } = req.body;
     const query = "UPDATE usuario SET nombre = ?, saldo = ?, correo = ? WHERE nombre = ?";
     mysqlConnection.query(query, [nombre, saldo, correo, nombreId], (err, rows, fields) => {
         if(!err){
             if(rows.affectedRows == 0){
-                res.json({Status: 'No existe el usuario ' + nombre});
+                res.json({Status: 'No existe el usuario ' + nombreId});
             }
             else{
-                res.json({Status: 'Usuario actualizado ' + nombre});
+                const token = jwt.sign({_id: nombre},secretKey);
+                res.json({Status: 'Usuario actualizado ' + nombreId, token});
             }
         } else {
             console.log(err);
@@ -88,10 +89,6 @@ router.post('/usuarioAdd', cors(corsOptionsDelegate), (req, res) => {
     });
 });
 
-
-
-
-module.exports = router;
 router.get('/privado', verificarToken,cors(corsOptionsDelegate), (req, res) => {
     console.log("id del usuario (por ahora es el nombre): "+req.userId);
     res.json({
@@ -107,15 +104,15 @@ router.get('/publico', cors(corsOptionsDelegate), (req, res) => {
 
 function verificarToken(req, res, next)
 {
-    console.log(req.headers.authorization);
+    //console.log(req.headers.authorization);
     if(!req.headers.authorization)
     {
         return res.status(401).send('Solicitud no autorizada');
     }
     const token = req.headers.authorization.split(' ')[1];
-    if(token === 'nul')
+    if(token == null)
     {
-        return res.status(401).send('Solicitud no autorizada');
+        return res.status(401).send('Solicitud no autorizada 2');
     }
     //console.log('token: '+ token)
 
@@ -125,3 +122,5 @@ function verificarToken(req, res, next)
     next();
 
 }
+
+module.exports = router;

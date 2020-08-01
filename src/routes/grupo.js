@@ -90,29 +90,29 @@ router.put('/grupo', cors(corsOptionsDelegate), (req, res) => {
 
 
 
+// Esto es de usuario
+// router.get('/usuario', cors(corsOptionsDelegate), (req, res) => {//esto es de usuario
+//     mysqlConnection.query('SELECT * FROM usuario', (err, rows) => {
+//         if(!err){
+//             res.json(rows);
+//         }
+//         else{
+//             console.log('error en dataBase');
+//         }
+//     })
+// });
 
-router.get('/usuario', cors(corsOptionsDelegate), (req, res) => {//esto es de usuario
-    mysqlConnection.query('SELECT * FROM usuario', (err, rows) => {
-        if(!err){
-            res.json(rows);
-        }
-        else{
-            console.log('error en dataBase');
-        }
-    })
-});
-
-router.get('/usuario/:nombre', cors(corsOptionsDelegate), (req, res) => {//esto es de usuario
-    const { nombre } = req.params;
-    mysqlConnection.query('SELECT * FROM usuario WHERE nombre = ?', [nombre],  (err, rows, fields) => {
-        if(!err){
-            res.json(rows[0]);
-        }
-        else{
-            console.log('error en dataBase');
-        }
-    })
-});
+// router.get('/usuario/:nombre', cors(corsOptionsDelegate), (req, res) => {//esto es de usuario
+//     const { nombre } = req.params;
+//     mysqlConnection.query('SELECT * FROM usuario WHERE nombre = ?', [nombre],  (err, rows, fields) => {
+//         if(!err){
+//             res.json(rows[0]);
+//         }
+//         else{
+//             console.log('error en dataBase');
+//         }
+//     })
+// });
 
 
 
