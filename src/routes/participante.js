@@ -5,8 +5,10 @@ const router = express.Router();
 const mysqlConnection = require('../dataBase');
 const corsOptionsDelegate = require('../cors');
 
-router.get('/participanteUsuario/:nombre', cors(corsOptionsDelegate), (req, res) => {
-    const { nombre } = req.params;
+const verificarToken = require('../token');
+
+router.get('/participanteUsuario', verificarToken, cors(corsOptionsDelegate), (req, res) => {
+    const nombre = req.userId;
     mysqlConnection.query(
         'SELECT id, titulo, autor, fechaLimite, plantillaAsociada, tipoDeVotacion, descripcion, votos FROM participante NATURAL JOIN votacion WHERE participante.nombre = ?',
         [nombre],  (err, rows, fields) => {
@@ -19,7 +21,7 @@ router.get('/participanteUsuario/:nombre', cors(corsOptionsDelegate), (req, res)
     })
 });
 
-router.get('/participanteVotacion/:id', cors(corsOptionsDelegate), (req, res) => {
+router.get('/participanteVotacion/:id', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     const { id } = req.params;
     mysqlConnection.query(
         'SELECT nombre, saldo, correo, idValidador, bloqAprobados, bloqPropuestos, bloqRevisados, bloqValidados FROM participante NATURAL JOIN usuario WHERE participante.id = ?',
@@ -33,7 +35,7 @@ router.get('/participanteVotacion/:id', cors(corsOptionsDelegate), (req, res) =>
     })
 });
 
-router.get('/participanteVotacionNum/:id', cors(corsOptionsDelegate), (req, res) => {
+router.get('/participanteVotacionNum/:id', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     const { id } = req.params;
     mysqlConnection.query(
         'SELECT COUNT(*) FROM participante NATURAL JOIN usuario WHERE participante.id = ?',
@@ -47,7 +49,7 @@ router.get('/participanteVotacionNum/:id', cors(corsOptionsDelegate), (req, res)
     })
 });
 
-router.get('/participanteDelete/:id/:nombre', cors(corsOptionsDelegate), (req, res) => {
+router.get('/participanteDelete/:id/:nombre', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     const { id, nombre } = req.params;
     const query = "DELETE FROM participante WHERE id = ? AND nombre = ?";
     mysqlConnection.query(query, [id, nombre], (err, rows) => {
