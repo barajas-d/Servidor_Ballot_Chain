@@ -29,7 +29,7 @@ router.post('/iniciarSesion', cors(corsOptionsDelegate), (req, res) => {
     })
 });
 
-router.get('/usuario', cors(corsOptionsDelegate), (req, res) => {
+router.get('/usuario', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     mysqlConnection.query('SELECT * FROM usuario', (err, rows) => {
         if(!err){
             res.json(rows);
@@ -104,7 +104,7 @@ router.get('/publico', cors(corsOptionsDelegate), (req, res) => {
 
 function verificarToken(req, res, next)
 {
-    console.log(req.headers.authorization);
+    //console.log(req.headers.authorization);
     if(!req.headers.authorization)
     {
         return res.status(401).send('Solicitud no autorizada');
@@ -114,12 +114,11 @@ function verificarToken(req, res, next)
     {
         return res.status(401).send('Solicitud no autorizada 2');
     }
-    console.log('token: '+ token)
+    //console.log('token: '+ token)
 
     const datos= jwt.verify(token, secretKey)
     //console.log(datos);
     req.userId= datos._id;
-    console.log(req.userId)
     next();
 
 }
