@@ -4,20 +4,21 @@ const cors = require('cors');
 var regex = new RegExp('/.*localhost.*');
 var regex2 = new RegExp('.*')
 var whitelist = [
-    /.*/
+    'http://localhost:4200'
 ]
 
-var corsOptionsDelegate = function (origin, callback) {
-    var corsOptions;
-    if (whitelist.indexOf(origin) != -1) {
-      corsOptions = { origin: true }
+var corsOptionsDelegate = {
+    origin: function (origin, callback) {
+    console.log('origin: ' + origin);
+    if (whitelist.indexOf(origin) !== -1) {
       console.log('ENTRO AL ORIGIN TRUE');
+      callback(null, true);
     } else {
-      corsOptions = { origin: false }
       console.log('ENTRO AL ORIGIN FALSE');
+      callback('Deny CORS', false);
     }
-    callback(null, corsOptions);
   }
+}
 
 
 module.exports = corsOptionsDelegate;
