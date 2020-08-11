@@ -36,6 +36,7 @@ CREATE TABLE votacion(
     id INT NOT NULL AUTO_INCREMENT,
     titulo VARCHAR(50) DEFAULT NULL,
     autor VARCHAR(50) DEFAULT 'Santiago',
+    fechaInicio DATE DEFAULT NULL,
     fechaLimite DATE DEFAULT NULL,
     plantillaAsociada INT DEFAULT NULL,
     tipoDeVotacion INT NOT NULL,
@@ -47,10 +48,11 @@ CREATE TABLE votacion(
 );
 
 CREATE TABLE participante(
-    id INT NOT NULL,
+    id INT NOT NULL AUTO_INCREMENT,
+    idVotacion INT NOT NULL,
     nombre VARCHAR(50) NOT NULL,
-    PRIMARY KEY(id, nombre),
-    FOREIGN KEY(id) REFERENCES votacion(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY(id),
+    FOREIGN KEY(idVotacion) REFERENCES votacion(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY(nombre) REFERENCES usuario(nombre) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -111,7 +113,7 @@ INSERT INTO tipoVotacion (id, nombre) VALUES ( 2, 'Popular');
 INSERT INTO tipoVotacion (id, nombre) VALUES ( 3, 'Clasificacion');
 
 
-INSERT INTO votacion (autor, titulo, id,fechaLimite, tipoDeVotacion, descripcion) VALUES ('Santiago', 'TituloVotacion', 1, '2020-10-20', 1, 'ejemplo votacion ranking');
+INSERT INTO votacion (autor, titulo, id, fechaLimite, tipoDeVotacion, descripcion) VALUES ('Santiago', 'TituloVotacion', 1, '2020-10-20', 1, 'ejemplo votacion ranking');
 INSERT INTO votacion (autor, titulo, id, fechaLimite, tipoDEVotacion, descripcion, votos) VALUES ('Santiago', 'TituloVotacion', 2, '2020-10-20', 2, 'ejemplo votacion popular',20);
 INSERT INTO votacion (autor, titulo, id, fechaLimite, tipoDEVotacion, descripcion) VALUES ('Santiago', 'TituloVotacion', 3, '2020-10-20', 3, 'ejemplo votacion clasificacion');
 
