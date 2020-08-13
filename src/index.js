@@ -11,7 +11,7 @@ const peerServer = ExpressPeerServer(httpserver, {
  
 const peer_port = process.env.PORT || 9000;
 
-httpserver.listen(peer_port, function () {//Poner servidor en modo de escucha para responder a peticiones HTTP
+httpserver.listen(peer_port, function () {
     console.log("listening peer connections on : " + peer_port);
 });
 
