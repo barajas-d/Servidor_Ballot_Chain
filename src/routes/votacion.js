@@ -31,11 +31,14 @@ router.get('/votacion/:id', cors(corsOptionsDelegate), (req, res) => {
 });
 
 router.post('/votacionAdd', cors(corsOptionsDelegate), (req, res) => {
-    const { fecha, tipoVotacion, descripcion, votos, cantCredenciales  } = req.body;
-    const query = "INSERT INTO votacion (fechaLimite, tipoDeVotacion, descripcion, votos) VALUES (?, ?, ?, ?)";
-    mysqlConnection.query(query, [fecha, tipoVotacion, descripcion, votos], (err, rows, fields) => {
+    const { titulo, autor, fechaInicio, fechaLimite, tipoDeVotacion, descripcion, cantCredenciales, votos, participantes  } = req.body;
+    const query = "INSERT INTO votacion (titulo, autor, fechaInicio, fechaLimite, tipoDeVotacion, descripcion, votos) values (?, ?, ?, ?, ?, ?, ?);";
+    //const query = "INSERT INTO votacion (fechaLimite, tipoDeVotacion, descripcion, votos) VALUES (?, ?, ?, ?)";
+    console.log(participantes);
+    console.log('Credenciales: ' + cantCredenciales);
+    mysqlConnection.query(query, [titulo, autor, '2020-10-20', '2020-10-20', tipoDeVotacion, descripcion, votos], (err, rows, fields) => {
         if(!err) {
-            if(cantCredenciales == undefined){
+            if(cantCredenciales == undefined || cantCredenciales == 0){
                 res.json({Status: "Votacion creada con exito", Id: rows["insertId"], Credenciales: 0});
             }
             else{
