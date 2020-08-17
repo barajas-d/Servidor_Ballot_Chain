@@ -31,12 +31,21 @@ router.get('/votacion/:id', cors(corsOptionsDelegate), (req, res) => {
 });
 
 router.post('/votacionAdd', cors(corsOptionsDelegate), (req, res) => {
-    const { titulo, autor, fechaInicio, fechaLimite, tipoDeVotacion, descripcion, cantCredenciales, votos, participantes  } = req.body;
+
+    function transformarFecha(fecha){
+        let fechaSalida = "";
+        fechaSalida = fecha['year'] + '-' + fecha['month'] + '-' + fecha['day'];
+        return fechaSalida;
+    }
+
+    const { titulo, autor, fechaInicio, fechaLimite, tipoDeVotacion, descripcion, cantCredenciales, votos, participantes, opciones  } = req.body;
     const query = "INSERT INTO votacion (titulo, autor, fechaInicio, fechaLimite, tipoDeVotacion, descripcion, votos) values (?, ?, ?, ?, ?, ?, ?);";
     //const query = "INSERT INTO votacion (fechaLimite, tipoDeVotacion, descripcion, votos) VALUES (?, ?, ?, ?)";
     console.log(participantes);
+    console.log(opciones);
+    //console.log(opcion)
     console.log('Credenciales: ' + cantCredenciales);
-    mysqlConnection.query(query, [titulo, autor, '2020-10-20', '2020-10-20', tipoDeVotacion, descripcion, votos], (err, rows, fields) => {
+    mysqlConnection.query(query, [titulo, autor, transformarFecha(fechaInicio), transformarFecha(fechaLimite), tipoDeVotacion, descripcion, votos], (err, rows, fields) => {
         if(!err) {
             if(cantCredenciales == undefined || cantCredenciales == 0){
                 res.json({Status: "Votacion creada con exito", Id: rows["insertId"], Credenciales: 0});

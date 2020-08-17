@@ -49,9 +49,11 @@ CREATE TABLE votacion(
 
 CREATE TABLE participante(
     id INT NOT NULL AUTO_INCREMENT,
+    credencial INT NOT NULL,
     idVotacion INT NOT NULL,
     nombre VARCHAR(50) NOT NULL,
     PRIMARY KEY(id),
+    FOREIGN KEY(credencial) REFERENCES credencial(id) ON DELETE CASCADE,
     FOREIGN KEY(idVotacion) REFERENCES votacion(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY(nombre) REFERENCES usuario(nombre) ON DELETE CASCADE ON UPDATE CASCADE
 );
