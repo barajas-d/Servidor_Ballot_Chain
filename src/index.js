@@ -3,6 +3,7 @@ const { ExpressPeerServer } = require('peer');
 const app = express();
 const httpserver = require('http').createServer(app);
 const cors = require('cors');
+const validadores = require('./validadores');
 
 const peerServer = ExpressPeerServer(httpserver, {
     debug: true,
@@ -38,11 +39,11 @@ app.listen(3000, () =>{
 
 peerServer.on('connection', (client) => {
     console.log(client.getId());
-    const vali = require('./validadores');
-    vali.registrarValidador(client.getId());
+    validadores.registrarValidador(client.getId());
     console.log("Peer conectado");
 });
 
 peerServer.on('disconnect', (client) => {
+    validadores.eliminarValidador(client.getId());
     console.log("Peer desconectado")
 });

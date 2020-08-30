@@ -1,7 +1,8 @@
 const mysqlConnection = require('./dataBase');
+const { query } = require('express');
 
 function registrarValidador(peerId){
-    query = 'insert into validador(peerID) values (?)'
+    const query = 'insert into validador(peerID) values (?)'
     mysqlConnection.query(query, [peerId], (err, rows) => {
         if(!err){
             console.log('registrado en dataBase');
@@ -12,4 +13,18 @@ function registrarValidador(peerId){
     });
 }
 
+
+function eliminarValidador(peerId){
+    const query = 'delete from validador where peerID = ?';
+    mysqlConnection.query(query, [peerId], (err, rows) => {
+        if(!err){
+            console.log('eliminado de dataBase');
+        }
+        else{
+            console.log('error en dataBase');
+        }
+    });
+}
+
 exports.registrarValidador = registrarValidador;
+exports.eliminarValidador = eliminarValidador;
