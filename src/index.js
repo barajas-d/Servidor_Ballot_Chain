@@ -9,7 +9,7 @@ const peerServer = ExpressPeerServer(httpserver, {
     path: '/'
 });
  
-const peer_port = process.env.PORT || 9000;
+const peer_port = process.env.PORTPEER || 9000;
 
 httpserver.listen(peer_port, function () {
     console.log("listening peer connections on : " + peer_port);
@@ -30,12 +30,16 @@ app.use(require('./routes/opcion'));
 app.use(require('./routes/credencial'));
 app.use(require('./routes/usuario'));
 app.use(require('./routes/tipoVotacion'));
+app.use(require('./routes/validador'));
 //Iniciar
 app.listen(3000, () =>{
     console.log('Server on port', app.get('port'))
 });
 
 peerServer.on('connection', (client) => {
+    console.log(client.getId());
+    const vali = require('./validadores');
+    vali.registrarValidador(client.getId());
     console.log("Peer conectado");
 });
 

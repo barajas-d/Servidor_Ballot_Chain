@@ -2,15 +2,24 @@ CREATE DATABASE IF NOT EXISTS ballot_chain;
 
 USE ballot_chain;
 
-DROP TABLE IF EXISTS credencial;
+
 DROP TABLE IF EXISTS participante;
 DROP TABLE IF EXISTS opcion;
 DROP TABLE IF EXISTS pendiente;
 DROP TABLE IF EXISTS miembro;
 DROP TABLE IF EXISTS grupo;
+DROP TABLE IF EXISTS validador;
+DROP TABLE IF EXISTS credencial;
 DROP TABLE IF EXISTS votacion;
 DROP TABLE IF EXISTS usuario;
 DROP TABLE IF EXISTS tipoVotacion;
+
+
+CREATE TABLE validador(
+    id INT NOT NULL AUTO_INCREMENT,
+    peerId VARCHAR(200) NOT NULL,
+    PRIMARY KEY(id)
+);
 
 CREATE TABLE tipoVotacion(
     id INT NOT NULL AUTO_INCREMENT,
@@ -47,6 +56,16 @@ CREATE TABLE votacion(
     FOREIGN KEY(tipoDeVotacion) REFERENCES tipoVotacion(id)
 );
 
+CREATE TABLE  credencial(
+  id INT NOT NULL AUTO_INCREMENT,
+  clave VARCHAR(200) DEFAULT NUll,
+  isValid boolean NOT NULL DEFAULT false,
+  votacion INT NOT NULL,
+  PRIMARY KEY(id),
+  FOREIGN KEY(votacion) REFERENCES votacion(id)
+);
+
+
 CREATE TABLE participante(
     id INT NOT NULL AUTO_INCREMENT,
     credencial INT NOT NULL,
@@ -68,14 +87,6 @@ CREATE TABLE opcion(
     FOREIGN KEY(votacion) REFERENCES votacion(id)
 );
 
-CREATE TABLE  credencial(
-  id INT NOT NULL AUTO_INCREMENT,
-  clave VARCHAR(200) DEFAULT NUll,
-  isValid boolean NOT NULL DEFAULT false,
-  votacion INT NOT NULL,
-  PRIMARY KEY(id),
-  FOREIGN KEY(votacion) REFERENCES votacion(id)
-);
 
 CREATE TABLE grupo (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -193,12 +204,12 @@ INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Diego', 'Opcion de e
 INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Santiago', 'Opcion de ejemplo', 6);
 INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Brandonn', 'Opcion de ejemplo', 6);
 
-INSERT INTO participante (id, nombre) VALUES (4, 'Alice');
-INSERT INTO participante (id, nombre) VALUES (6, 'Alice');
-INSERT INTO participante (id, nombre) VALUES (4, 'Bob');
-INSERT INTO participante (id, nombre) VALUES (4, 'Brandonn');
-INSERT INTO participante (id, nombre) VALUES (5, 'Brandonn');
-INSERT INTO participante (id, nombre) VALUES (6, 'Brandonn');
+##INSERT INTO participante (id, nombre) VALUES (4, 'Alice');
+##INSERT INTO participante (id, nombre) VALUES (6, 'Alice');
+##INSERT INTO participante (id, nombre) VALUES (4, 'Bob');
+##INSERT INTO participante (id, nombre) VALUES (4, 'Brandonn');
+##INSERT INTO participante (id, nombre) VALUES (5, 'Brandonn');
+##INSERT INTO participante (id, nombre) VALUES (6, 'Brandonn');
 
 INSERT INTO votacion (autor, titulo, fechaLimite, tipoDeVotacion, descripcion) VALUES ('Santiago', 'TituloVotacion', '2020-10-20', 1, 'ejemplo votacion popular');
 INSERT INTO votacion (autor, titulo, fechaLimite, tipoDEVotacion, descripcion) VALUES ('Santiago', 'TituloVotacion', '2020-10-20', 1, 'ejemplo votacion ranking');
@@ -206,7 +217,6 @@ INSERT INTO votacion (autor, titulo, fechaLimite, tipoDEVotacion, descripcion) V
 
 INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (1, 'candidato 1', 'Descripcion', '123');
 INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (1, 'candidato 2', 'Descripcion', '456');
-
 INSERT INTO opcion (votacion, nombre, descripcion, identificacion) VALUES (2, 'candidato 1', 'Descripcion', '789');
 
 
