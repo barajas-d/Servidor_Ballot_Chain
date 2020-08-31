@@ -18,6 +18,7 @@ DROP TABLE IF EXISTS tipoVotacion;
 CREATE TABLE validador(
     id INT NOT NULL AUTO_INCREMENT,
     peerId VARCHAR(200) NOT NULL,
+    isValidador boolean NOT NULL DEFAULT false,
     PRIMARY KEY(id)
 );
 

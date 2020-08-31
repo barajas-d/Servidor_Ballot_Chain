@@ -2,7 +2,7 @@ const mysqlConnection = require('./dataBase');
 const { query } = require('express');
 
 function registrarValidador(peerId){
-    const query = 'insert into validador(peerID) values (?)'
+    const query = 'insert into validador(peerID) values (?)' //where isValidador = false;
     mysqlConnection.query(query, [peerId], (err, rows) => {
         if(!err){
             console.log('registrado en dataBase');
