@@ -20,8 +20,8 @@ router.get('/validadores', (req, res) => {
 });
 
 
-router.put('/activarValidador', (req, res) => {
-    const { peerId } = req.body;
+router.put('/activarValidador/:peerId', (req, res) => {
+    const { peerId } = req.params;
     const query = "UPDATE validador SET isValidador = ?, WHERE peerId = ?";
     mysqlConnection.query(query, [true, peerId]), (err, rows) => {
         if(!err){
@@ -38,8 +38,8 @@ router.put('/activarValidador', (req, res) => {
     }
 });
 
-router.put('/desactivarValidador', (req, res) => {
-    const { peerId } = req.body;
+router.put('/desactivarValidador/:peerId', (req, res) => {
+    const { peerId } = req.params;
     const query = "UPDATE validador SET isValidador = ?, WHERE peerId = ?";
     mysqlConnection.query(query, [false, peerId]), (err, rows) => {
         if(!err){
@@ -47,11 +47,11 @@ router.put('/desactivarValidador', (req, res) => {
                 res.json({Status: 'No existe el validador ' + id});
             }
             else{
-                res.json({Status: 'validador desactivado ' + id});
+                res.json({Status: 'validador activado ' + id});
             }
         }
         else{
-            console.log(err);
+            console.log('No se encontro el peerId');
         }
     }
 });
