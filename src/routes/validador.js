@@ -9,7 +9,7 @@ const corsOptionsDelegate = require('../cors');
 
 router.get('/validadores', cors(corsOptionsDelegate), (req, res) => {
     console.log('entry');
-    mysqlConnection.query('SELECT * FROM validador', (err, rows) => {
+    mysqlConnection.query('SELECT * FROM validador where isValidador = ?', [true], (err, rows) => {
         if(!err){
             res.json(rows);
         }
