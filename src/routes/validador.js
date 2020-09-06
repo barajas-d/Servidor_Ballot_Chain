@@ -7,7 +7,7 @@ const mysqlConnection = require('../dataBase');
 const corsOptionsDelegate = require('../cors');
 
 
-router.get('/validadores', (req, res) => {
+router.get('/validadores', cors(corsOptionsDelegate), (req, res) => {
     console.log('entry');
     mysqlConnection.query('SELECT * FROM validador', (err, rows) => {
         if(!err){
@@ -20,6 +20,40 @@ router.get('/validadores', (req, res) => {
 });
 
 
+router.get('/activarValidador/:peerId', cors(corsOptionsDelegate), (req, res) => {
+    const { peerId } = req.params;
+    const query = "UPDATE validador SET isValidador = ? WHERE peerId = ?";
+    mysqlConnection.query(query, [true, peerId]), (err, rows) => {
+        if(!err){
+            if(rows.affectedRows == 0){
+                res.json({Status: 'No existe el validador'});
+            }
+            else{
+                res.json({Status: 'validador activados'});
+            }
+        }
+        else{
+            res.json({Status: 'No se encontro el peerId'});
+        }
+    }
+});
 
+router.get('/desactivarValidador/:peerId', cors(corsOptionsDelegate), (req, res) => {
+    const { peerId } = req.params;
+    const query = "UPDATE validador SET isValidador = ? WHERE peerId = ?";
+    mysqlConnection.query(query, [false, peerId]), (err, rows) => {
+        if(!err){
+            if(rows.affectedRows == 0){
+                res.json({Status: 'No existe el validador'});
+            }
+            else{
+                res.json({Status: 'validador activado'});
+            }
+        }
+        else{
+            res.json({Status: 'No se encontro el peerId'});
+        }
+    }
+});
 
 module.exports = router; 
