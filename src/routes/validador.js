@@ -7,9 +7,9 @@ const mysqlConnection = require('../dataBase');
 const corsOptionsDelegate = require('../cors');
 
 
-router.get('/validadores', (req, res) => {
+router.get('/validadores', cors(corsOptionsDelegate), (req, res) => {
     console.log('entry');
-    mysqlConnection.query('SELECT * FROM validador WHERE isValidador = ?',[true], (err, rows) => {
+    mysqlConnection.query('SELECT * FROM validador', (err, rows) => {
         if(!err){
             res.json(rows);
         }
@@ -20,7 +20,7 @@ router.get('/validadores', (req, res) => {
 });
 
 
-router.get('/activarValidador/:peerId', (req, res) => {
+router.get('/activarValidador/:peerId', cors(corsOptionsDelegate), (req, res) => {
     const { peerId } = req.params;
     const query = "UPDATE validador SET isValidador = ? WHERE peerId = ?";
     mysqlConnection.query(query, [true, peerId]), (err, rows) => {
@@ -33,25 +33,25 @@ router.get('/activarValidador/:peerId', (req, res) => {
             }
         }
         else{
-            res.json('No se encontro el peerId');
+            res.json({Status: 'No se encontro el peerId'});
         }
     }
 });
 
-router.get('/desactivarValidador/:peerId', (req, res) => {
+router.get('/desactivarValidador/:peerId', cors(corsOptionsDelegate), (req, res) => {
     const { peerId } = req.params;
     const query = "UPDATE validador SET isValidador = ? WHERE peerId = ?";
     mysqlConnection.query(query, [false, peerId]), (err, rows) => {
         if(!err){
             if(rows.affectedRows == 0){
-                res.json({Status: 'No existe el validador ' + id});
+                res.json({Status: 'No existe el validador'});
             }
             else{
-                res.json({Status: 'validador activado ' + id});
+                res.json({Status: 'validador activado'});
             }
         }
         else{
-            console.log('No se encontro el peerId');
+            res.json({Status: 'No se encontro el peerId'});
         }
     }
 });
