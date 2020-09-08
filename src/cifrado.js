@@ -1,24 +1,24 @@
 const NodeRSA = require('node-rsa');
 
-var key = new nodeRSA({b: 1024});
-var encryptPrivateKey = this.key.exportKey('private');
-var encryptPublicKey = this.key.exportKey('public');
+var key = new NodeRSA({b: 1024});
+var encryptPrivateKey = key.exportKey('private');
+var encryptPublicKey = key.exportKey('public');
   
-var signature = new nodeRSA({b: 1024});
-var signaturePrivate = this.signature.exportKey('private');
-var signaturePublic = this.signature.exportKey('public');
+var  signature = new NodeRSA({b: 1024});
+var signaturePrivate = signature.exportKey('private');
+var signaturePublic = signature.exportKey('public');
 
 
 function getEncryptPublicKey(){
-    return this.encryptPublicKey();
+    return encryptPublicKey();
 }
 
 function encrypt(object){
-    return this.key.encrypt(object, 'base64');
+    return key.encrypt(object, 'base64');
 }
 
 function decrypt(objectEncrypted){
-    return this.key.decrypt(objectEncrypted, 'utf8');
+    return key.decrypt(objectEncrypted, 'utf8');
 }
 
 function encryptExternal(externalPublicKey, object){
@@ -30,11 +30,11 @@ function encryptExternal(externalPublicKey, object){
 
 //Firma Digital
 function sign(object){
-    return this.signature.sign(object, 'base64', 'base64');
+    return signature.sign(object, 'base64', 'base64');
 }
 
 function checkSing(objectUnsigned, objectSigned){
-    return this.signature.verify(objectUnsigned, objectSigned, 'base64', 'base64');
+    return signature.verify(objectUnsigned, objectSigned, 'base64', 'base64');
 }
 
 exports.checkSing = checkSing;
