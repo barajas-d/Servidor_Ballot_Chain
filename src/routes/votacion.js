@@ -5,9 +5,11 @@ const crypto = require('crypto');
 const cryptoUpdateMd5 = "ballot_chain";
 const mysqlConnection = require('../dataBase');
 const corsOptionsDelegate = require('../cors');
+const jwt = require('jsonwebtoken');
 
+const secretKey = '123456789'
 
-router.get('/votacion', cors(corsOptionsDelegate), (req, res) => {
+router.get('/votacion', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     mysqlConnection.query('SELECT * FROM votacion', (err, rows) => {
         if(!err){
             res.json(rows);
@@ -18,7 +20,7 @@ router.get('/votacion', cors(corsOptionsDelegate), (req, res) => {
     })
 });
 
-router.get('/votacion/:id', cors(corsOptionsDelegate), (req, res) => {
+router.get('/votacion/:id', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     const { id } = req.params;
     mysqlConnection.query('SELECT * FROM votacion WHERE id = ?', [id],  (err, rows, fields) => {
         if(!err){
@@ -30,7 +32,7 @@ router.get('/votacion/:id', cors(corsOptionsDelegate), (req, res) => {
     })
 });
 
-router.post('/votacionAdd', cors(corsOptionsDelegate), (req, res) => {
+router.post('/votacionAdd', verificarToken, cors(corsOptionsDelegate), (req, res) => {
 
     function transformarFecha(fecha){
         let fechaSalida = "";
@@ -65,16 +67,16 @@ router.post('/votacionAdd', cors(corsOptionsDelegate), (req, res) => {
                         }
                     });
                 }
-                res.json({Status: "Votacion creada con exito", Id: rows["insertId"], Credenciales: cantCredenciales});
+                res.json({Status: "Votacion creada con exito", Id: rows["insertId"], Credenciales: cantCredenciales, Error:false});
             }
         } else {
-            res.json({Error: 'Error al crear la votacion'});
+            res.json({Status: 'Error al crear la votacion', Error: true});
         }
     });
 });
 
 
-router.put('/votacionPut', cors(corsOptionsDelegate), (req, res) => {
+router.put('/votacionPut', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     const { id, fecha, tipoVotacion, descripcion, votos } = req.body;
     const query = "UPDATE votacion SET fechaLimite = ?, tipoDeVotacion = ?, descripcion = ?, votos = ? WHERE id = ?";
     mysqlConnection.query(query, [fecha, tipoVotacion, descripcion, votos, id], (err, rows, fields) => {
@@ -91,7 +93,7 @@ router.put('/votacionPut', cors(corsOptionsDelegate), (req, res) => {
     });
 });
 
-router.delete('/votacionDelete', cors(corsOptionsDelegate), (req, res) => {
+router.delete('/votacionDelete', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     const { id } = req.body;
     const query = "DELETE FROM votacion WHERE ? = id";
     mysqlConnection.query(query, [id], (err, rows) => {
@@ -108,7 +110,7 @@ router.delete('/votacionDelete', cors(corsOptionsDelegate), (req, res) => {
     })
 });
 
-router.get('/votacionAutor/:nombre', cors(corsOptionsDelegate), (req, res) => {
+router.get('/votacionAutor/:nombre', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     const { nombre } = req.params;
     mysqlConnection.query('SELECT * FROM votacion WHERE autor = ?', [nombre],  (err, rows, fields) => {
         if(!err){
@@ -119,5 +121,21 @@ router.get('/votacionAutor/:nombre', cors(corsOptionsDelegate), (req, res) => {
         }
     })
 });
+
+function verificarToken(req, res, next) {
+    console.log(req.headers);
+    if (!req.headers.authorization) {
+        console.log("primer if");
+        return res.status(401).send('Solicitud no autorizada');
+    }
+    const token = req.headers.authorization.split(' ')[1];
+    if (token === 'null') {
+        console.log("segundo if");
+        return res.status(401).send('Solicitud no autorizada');
+    }
+    const datos = jwt.verify(token, secretKey)
+    req.userId = datos._id;
+    next();
+}
 
 module.exports = router;

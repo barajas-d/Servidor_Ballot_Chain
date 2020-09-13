@@ -69,7 +69,7 @@ CREATE TABLE  credencial(
 
 CREATE TABLE participante(
     id INT NOT NULL AUTO_INCREMENT,
-    credencial INT NOT NULL,
+    credencial INT DEFAULT NULL,
     idVotacion INT NOT NULL,
     nombre VARCHAR(50) NOT NULL,
     PRIMARY KEY(id),
@@ -87,7 +87,6 @@ CREATE TABLE opcion(
     identificacion VARCHAR(200) DEFAULT NULL, 
     FOREIGN KEY(votacion) REFERENCES votacion(id)
 );
-
 
 CREATE TABLE grupo (
   id int(11) NOT NULL AUTO_INCREMENT,
