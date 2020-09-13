@@ -9,8 +9,6 @@ const jwt = require('jsonwebtoken');
 
 const secretKey = '123456789'
 
-
-
 router.get('/votacion', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     mysqlConnection.query('SELECT * FROM votacion', (err, rows) => {
         if(!err){

@@ -11,10 +11,10 @@ var corsOptionsDelegate = {
     origin: function (origin, callback) {
     console.log('origin: ' + origin);
     if (whitelist.indexOf(origin) !== -1) {
-      console.log('ENTRO AL ORIGIN TRUE');
+      //console.log('ENTRO AL ORIGIN TRUE');
       callback(null, true);
     } else {
-      console.log('ENTRO AL ORIGIN FALSE');
+      //console.log('ENTRO AL ORIGIN FALSE');
       callback('Deny CORS', false);
     }
   }
