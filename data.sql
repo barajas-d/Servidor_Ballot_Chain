@@ -15,12 +15,6 @@ DROP TABLE IF EXISTS usuario;
 DROP TABLE IF EXISTS tipoVotacion;
 
 
-CREATE TABLE validador(
-    id INT NOT NULL AUTO_INCREMENT,
-    peerId VARCHAR(200) NOT NULL,
-    isValidador boolean NOT NULL DEFAULT false,
-    PRIMARY KEY(id)
-);
 
 CREATE TABLE tipoVotacion(
     id INT NOT NULL AUTO_INCREMENT,
@@ -35,11 +29,21 @@ CREATE TABLE usuario(
     correo VARCHAR(50) NOT NULL,
     contrasena VARCHAR(64) DEFAULT NULL,
     idValidador VARCHAR(64) DEFAULT NULL,
+	reputacion INT NOT NULL Default 40 check(reputacion between 0 and 100),
     bloqAprobados INT DEFAULT 0,
     bloqPropuestos INT DEFAULT 0,
     bloqRevisados INT DEFAULT 0,
     bloqValidados INT DEFAULT 0,
     PRIMARY KEY(nombre)
+);
+
+CREATE TABLE validador(
+    id INT NOT NULL AUTO_INCREMENT,
+    peerId VARCHAR(200) NOT NULL,
+    isValidador boolean NOT NULL DEFAULT false,
+    nombreValidador VARCHAR(50) NOT NULL DEFAULT  '',
+	PRIMARY KEY(id),
+	FOREIGN KEY(nombreValidador) REFERENCES usuario(nombre) ON UPDATE CASCADE
 );
 
 CREATE TABLE votacion(
@@ -225,4 +229,26 @@ SELECT * FROM  votacion;
 SELECT * FROM  tipoVotacion;
 SELECT * FROM  credencial;
 SELECT * FROM  usuario;
-SELECT * FROM usuario WHERE nombre = 'lal' AND contrasena = 'lal'
+select * from validador;
+SELECT * FROM usuario WHERE nombre = 'lal' AND contrasena = 'lal';
+
+select nombre, peerId, reputacion from 
+usuario as u inner join validador as v 
+on v.nombreValidador = u.nombre;
+
+/*
+Prueba torneo
+*/
+insert into validador values(1, "abc", false, 'Brandonn');
+insert into validador values (2, "efg", false, 'Santiago');
+insert into validador values (3, "efg", false, 'Alice');
+insert into validador values (4, "efg", false, 'Bob');
+insert into validador values (5, "lal", false, 'Usuario1');
+
+update usuario set reputacion= 20 where nombre ='Brandonn';
+update usuario set reputacion= 60 where nombre ='Santiago';
+update usuario set reputacion= 80 where nombre ='Alice';
+update usuario set reputacion= 100 where nombre ='Bob';
+update usuario set reputacion= 0 where nombre ='Usuario1';
+
+
