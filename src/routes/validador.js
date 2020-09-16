@@ -6,6 +6,18 @@ const cryptoUpdateMd5 = "ballot_chain";
 const mysqlConnection = require('../dataBase');
 const corsOptionsDelegate = require('../cors');
 
+router.post('/usuarioValidador', (req, res) => {
+    const { peerId, nombre } = req.body;
+    const query = "UPDATE validador SET nombreValidador=? WHERE peerId=?";
+    mysqlConnection.query(query, [nombre, peerId], (err, rows) => {
+        if(!err){
+            res.json(rows);
+        }
+        else{
+            console.log('No se encontro el validador');
+        }
+    })
+});
 
 router.get('/validadores', cors(corsOptionsDelegate), (req, res) => {
     console.log('entry');
