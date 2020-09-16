@@ -7,7 +7,9 @@ const validadores = require('./validadores');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const cifrado = require('./cifrado');
-
+const iniciarTorneo = require('./Torneo/logicaTorneo');
+//Variables de torneo
+var tiempoSigTorneo=0;
 
 //Listener por socket.io
 io.on('connection', (socket) => {
@@ -93,3 +95,5 @@ peerServer.on('disconnect', (client) => {
     validadores.eliminarValidador(client.getId());
     //console.log("Peer desconectado")
 });
+
+setTimeout(iniciarTorneo, tiempoSigTorneo);
