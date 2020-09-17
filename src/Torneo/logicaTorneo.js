@@ -2,8 +2,9 @@ const router = require("../routes/validador");
 const mysqlConnection = require("../dataBase");
 const { json } = require("express");
 const cantGanadores= 2
+var validadoresActivos;
 
-function iniciarTorneo() {
+function iniciarTorneo(tiempo) {
   console.log("Iniciando torneo...");
   //TO-DO: Pedir la lista de validador y los usuarios relacionados
   solicitarValidadores();
@@ -17,7 +18,7 @@ function solicitarValidadores() {
         randomSort(validadores);
         console.log('Candidatos: ');
         console.log(validadores);
-        validadores = torneo(validadores);
+        validadoresActivos = torneo(validadores);
         console.log("Terminando torneo...");
       } else {
       }
@@ -61,4 +62,10 @@ function torneo(validadores) {
     
   }
 }
-module.exports = iniciarTorneo;
+
+function getValidadoresActivos() {
+  return validadoresActivos;
+}
+
+exports.iniciarTorneo = iniciarTorneo;
+exports.validadoresActivos = getValidadoresActivos;

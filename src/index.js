@@ -7,9 +7,10 @@ const validadores = require('./validadores');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const cifrado = require('./cifrado');
-const iniciarTorneo = require('./Torneo/logicaTorneo');
+const torneo = require('./Torneo/logicaTorneo');
+//var validadoresActivos = require('./Torneo/logicaTorneo');
 //Variables de torneo
-var tiempoSigTorneo=0;
+var tiempoSigTorneo=10000;
 
 //Listener por socket.io
 io.on('connection', (socket) => {
@@ -38,6 +39,8 @@ io.on('connection', (socket) => {
         console.log('entro un mensaje');
         socket.emit('voto', "voto de ejemplo");
     });
+
+
 });
 
 io.on('disconnect', () => {
@@ -96,4 +99,12 @@ peerServer.on('disconnect', (client) => {
     //console.log("Peer desconectado")
 });
 
-setTimeout(iniciarTorneo, tiempoSigTorneo);
+setTimeout(torneo.iniciarTorneo, tiempoSigTorneo, tiempoSigTorneo);
+setTimeout(notificarValidadores, tiempoSigTorneo);
+
+function notificarValidadores() {
+    console.log("notificando validadores");
+    //console.log('Ganadores', JSON.stringify(torneo.validadoresActivos()));
+    io.emit('torneo', JSON.stringify(torneo.validadoresActivos()));
+    setTimeout(notificarValidadores, tiempoSigTorneo);
+}

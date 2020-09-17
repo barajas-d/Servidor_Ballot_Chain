@@ -9,8 +9,9 @@ const jwt = require('jsonwebtoken');
 const secretKey = '123456789'
 
 router.post('/redirigir', verificarToken, cors(corsOptionsDelegate), (req, res) => {
-    const { voto, firma, peerValidador, encryptId } = req.body;
-
+    //const { voto, firma, peerValidador, encryptId } = req.body;
+    const { peerValidador, mensaje} = req.body;
+    console.log("EL JSON recibido es:", req.body);
     //console.log("mensaje: " + voto);
     //console.log("firma: " + firma);
     //console.log("peerValidador: " + peerValidador);
@@ -18,9 +19,9 @@ router.post('/redirigir', verificarToken, cors(corsOptionsDelegate), (req, res) 
     
     //console.log('ESTA FIRMADA CORRECTAMENTE?: ' + cifrado.checkSing(voto, firma));
 
-    //console.log("EL PEERID es: " + peerValidador);
+    console.log("EL PEERID es: " + peerValidador);
     
-    //peerJs.enviarMensaje("----------------PUES FUNCIONA ES CHIMBADA-----------------", peerValidador);
+    peerJs.enviarMensaje(mensaje, peerValidador);
     //REDIRIGIR EL MENSAJE A LOS VALIDADORES AQUI 
     
     //

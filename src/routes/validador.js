@@ -20,7 +20,7 @@ router.post('/usuarioValidador', (req, res) => {
 });
 
 router.get('/validadores', cors(corsOptionsDelegate), (req, res) => {
-    console.log('entry');
+    console.log('entry jaja');
     mysqlConnection.query('SELECT * FROM validador where isValidador = ?', [true], (err, rows) => {
         if(!err){
             res.json(rows);

@@ -44,14 +44,14 @@ CREATE TABLE usuario(
     PRIMARY KEY(nombre)
 );
 
-CREATE TABLE validador(
+/* CREATE TABLE validador(
     id INT NOT NULL AUTO_INCREMENT,
     peerId VARCHAR(200) NOT NULL,
     isValidador boolean NOT NULL DEFAULT false,
     nombreValidador VARCHAR(50) NOT NULL DEFAULT  '',
 	PRIMARY KEY(id),
 	FOREIGN KEY(nombreValidador) REFERENCES usuario(nombre) ON UPDATE CASCADE
-);
+); */
 
 CREATE TABLE votacion(
     id INT NOT NULL AUTO_INCREMENT,
