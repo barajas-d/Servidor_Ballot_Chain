@@ -47,11 +47,15 @@ function solicitarValidadores(miIo) {
     (err, validadores) => {
       if (!err) {
         randomSort(validadores);
-        validadoresInactivos=validadores;
+
+        if(validadoresInactivos==null)
+        {
+          validInactConfir=validadores;
+        }
 
         console.log('Candidatos: ');
         console.log(validadores);
-        validadoresActivos = torneo(validadores);
+        validadoresActivos = torneo(validInactConfir.concat(validActiConfir));
         console.log("Terminando torneo...");
         tiempoValidadores= (validadoresActivos.length+1)* stepTiempo
         notificarValidadores(miIo, validadores);
