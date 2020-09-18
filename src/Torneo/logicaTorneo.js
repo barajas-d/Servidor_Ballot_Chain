@@ -2,30 +2,74 @@ const router = require("../routes/validador");
 const mysqlConnection = require("../dataBase");
 const { json } = require("express");
 const cantGanadores= 2
-var validadoresActivos;
+const stepTiempo= 10000;
+var validadoresActivos= [];
+var validadoresInactivos= [];
+var validActiConfir=[];
+var validInactConfir=[];
+var ultimoHash=null;
 
-function iniciarTorneo(tiempo) {
-  console.log("Iniciando torneo...");
-  //TO-DO: Pedir la lista de validador y los usuarios relacionados
-  solicitarValidadores();
-  setTimeout(iniciarTorneo, 10000);
+function revisarConfirmaciones(){
+  const hash = confirmarHash();
+  validInactConfir= validInactConfir.filter(element => {hash === element.hashBlockchain});
 }
-function solicitarValidadores() {
+
+function confirmarHash(){
+  var mapa= new Map();
+  for(var i = 0; i < validActiConfir.length ; i++){
+    if(!mapa.has(validActiConfir[i].hashBlockchain)){
+      mapa.set(validActiConfir[i].hashBlockchain, 1);
+    }else{
+      var repeticiones = mapa.get(validActiConfir[i].hashBlockchain);
+      mapa.set(validActiConfir[i].hashBlockchain, repeticiones+1 );
+    }
+  }
+  var hashMayor;
+  var repeticiones=0;
+  for (let [key, value] of mapa) {
+    if(value >= repeticiones){
+      hashMayor=key;
+      repeticiones= value;
+    }
+  }
+  if(repeticiones >= Math.floor(validActiConfir.length*0.60) ){
+    return hashMayor;
+  }
+  return null;  //TO-DO: ¿Que se hace en ese caso?
+}
+function iniciarTorneo( miIo) {
+  console.log("Iniciando torneo...");
+  solicitarValidadores(miIo);
+}
+function solicitarValidadores(miIo) {
   mysqlConnection.query(
     "select nombre, peerId, reputacion from usuario as u inner join validador as v on v.nombreValidador = u.nombre;",
     (err, validadores) => {
       if (!err) {
         randomSort(validadores);
+        validadoresInactivos=validadores;
+
         console.log('Candidatos: ');
         console.log(validadores);
         validadoresActivos = torneo(validadores);
         console.log("Terminando torneo...");
+        tiempoValidadores= (validadoresActivos.length+1)* stepTiempo
+        notificarValidadores(miIo, validadores);
+        setTimeout(iniciarTorneo, tiempoValidadores, miIo);
       } else {
       }
     }
   );
 }
 
+function notificarValidadores(miIo, validadores)
+{
+  var objeto ={validadoresActivos : validadoresActivos,
+                validadores: validadores,
+                tiempo : stepTiempo};
+  
+  miIo.emit('torneo', JSON.stringify(objeto));
+}
 // tomado del algoritmo de Fisher–Yates de ordenamiento aleatorio
 function randomSort(validadores) {
   for (var i = validadores.length - 1; i > 0; i--) {
@@ -67,5 +111,31 @@ function getValidadoresActivos() {
   return validadoresActivos;
 }
 
+function notificarValidadorActivo(nombre, hashBlockchain){
+  if(esValidadorActivo(nombre)){
+    validActiConfir.push({nombre: nombre,
+                          hashBlockchain: hashBlockchain});
+  }else{
+    if(esValidadorInactivo(nombre)){
+      validInactConfir.push({nombre: nombre,
+                            hashBlockchain: hashBlockchain});
+    }
+  }
+}
+
+
+function esValidadorActivo(nombre){
+  const resultado=validadoresActivos.filter(element => {nombre === element.nombre});
+  if(resultado.length>0)
+    return true;
+  return false;
+}
+function esValidadorInactivo(nombre){
+  const resultado=validadoresInactivos.filter(element => {nombre === element.nombre});
+  if(resultado.length>0)
+    return true;
+  return false;
+}
+exports.notificarValidadorActivo = notificarValidadorActivo;
 exports.iniciarTorneo = iniciarTorneo;
 exports.validadoresActivos = getValidadoresActivos;

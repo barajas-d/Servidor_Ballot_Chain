@@ -99,12 +99,4 @@ peerServer.on('disconnect', (client) => {
     //console.log("Peer desconectado")
 });
 
-setTimeout(torneo.iniciarTorneo, tiempoSigTorneo, tiempoSigTorneo);
-setTimeout(notificarValidadores, tiempoSigTorneo);
-
-function notificarValidadores() {
-    console.log("notificando validadores");
-    //console.log('Ganadores', JSON.stringify(torneo.validadoresActivos()));
-    io.emit('torneo', JSON.stringify(torneo.validadoresActivos()));
-    setTimeout(notificarValidadores, tiempoSigTorneo);
-}
+setTimeout(torneo.iniciarTorneo, tiempoSigTorneo, io);

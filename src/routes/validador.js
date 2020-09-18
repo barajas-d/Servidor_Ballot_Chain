@@ -5,6 +5,8 @@ const crypto = require('crypto');
 const cryptoUpdateMd5 = "ballot_chain";
 const mysqlConnection = require('../dataBase');
 const corsOptionsDelegate = require('../cors');
+const verificarToken = require('../token');
+const logicaTorneo = require('../Torneo/logicaTorneo');
 
 router.post('/usuarioValidador', (req, res) => {
     const { peerId, nombre } = req.body;
@@ -66,6 +68,12 @@ router.get('/desactivarValidador/:peerId', cors(corsOptionsDelegate), (req, res)
             res.json({Status: 'No se encontro el peerId'});
         }
     }
+});
+
+router.post('/confirmarBlockChainActualizada', verificarToken, (req, res) => {
+    const nombre = req.userId;
+    const { hashBlockchain } = req.body;
+    logicaTorneo.notificarValidadorActivo(nombre, hashBlockchain);
 });
 
 module.exports = router; 

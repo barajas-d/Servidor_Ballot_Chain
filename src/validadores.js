@@ -8,6 +8,7 @@ function registrarValidador(peerId){
             console.log('registrado en dataBase');
         }
         else{
+            console.log(err);
             console.log('error en dataBase');
         }
     });
