@@ -12,7 +12,7 @@ const torneo = require('./Torneo/logicaTorneo');
 //Variables de torneo
 var tiempoSigTorneo=10000;
 
-//Listener por socket.io
+//Listener por socket.io ------------------
 io.on('connection', (socket) => {
     console.log('Nueva coneccion');
     socket.emit('voto', 'ListenerEstablecido');
@@ -22,7 +22,7 @@ io.on('connection', (socket) => {
 
         //Aqui debo validar firmas y reempaquetar
         
-        if(cifrado.checkSing(data['voto'], data['firma'])){
+        if(cifrado.checkSing(data['voto'], data['firma'], data['firmaKey'])){
             console.log('FIRMA CORRECTA');
         }
         else{
@@ -30,17 +30,23 @@ io.on('connection', (socket) => {
             //socket.emit('error', "No se registro el voto");
         }
 
-        data['firma'] = cifrado.sign('voto')
+        
+        data['firma'] = cifrado.sign(data['voto'])
+        console.log("FIRMADO: " + data['firma'])
+        data['firmaKey'] = cifrado.getSignaturePublic();
+        console.log("FIRMADO KEY: " + data['firmaKey'])
+
 
         io.emit('voto', data);
+
     });
 
+    // MIRAR SI SIRVE PA' ALGO--------------------------------
     socket.on('resivirVoto', data => {
         console.log('entro un mensaje');
         socket.emit('voto', "voto de ejemplo");
     });
-
-
+    //--------------------------------------------------------
 });
 
 io.on('disconnect', () => {

@@ -10,7 +10,7 @@ var signaturePublic = signature.exportKey('public');
 
 
 function getEncryptPublicKey(){
-    return encryptPublicKey();
+    return encryptPublicKey;
 }
 
 function encrypt(object){
@@ -33,12 +33,19 @@ function sign(object){
     return signature.sign(object, 'base64', 'base64');
 }
 
-function checkSing(objectUnsigned, objectSigned){
-    return signature.verify(objectUnsigned, objectSigned, 'base64', 'base64');
+function getSignaturePublic(){
+    return signature.exportKey('public');
+}
+
+function checkSing(objectUnsigned, objectSigned, singKey){
+    var temporalSignature;
+    temporalSignature = new NodeRSA(singKey);
+    return temporalSignature.verify(objectUnsigned, objectSigned, 'base64', 'base64');
 }
 
 exports.checkSing = checkSing;
 exports.sign = sign;
+exports.getSignaturePublic = getSignaturePublic;
 exports.encryptExternal = encryptExternal;
 exports.decrypt = decrypt;
 exports.encrypt = encrypt;
