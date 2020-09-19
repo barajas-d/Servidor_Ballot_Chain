@@ -105,4 +105,4 @@ peerServer.on('disconnect', (client) => {
     //console.log("Peer desconectado")
 });
 
-setTimeout(torneo.iniciarTorneo, tiempoSigTorneo, io);
+torneo.iniciarTorneo(io);
