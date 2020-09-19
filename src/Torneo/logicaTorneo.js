@@ -4,14 +4,16 @@ const { json } = require("express");
 const cantGanadores= 2
 const stepTiempo= 10000;
 var validadoresActivos= [];
-var validadoresInactivos= [];
+var validadoresInactivos= null;
 var validActiConfir=[];
 var validInactConfir=[];
 var ultimoHash=null;
+var IO = null;
 
 function revisarConfirmaciones(){
   const hash = confirmarHash();
   validInactConfir= validInactConfir.filter(element => {hash === element.hashBlockchain});
+  iniciarTorneo();
 }
 
 function confirmarHash(){
@@ -39,40 +41,45 @@ function confirmarHash(){
 }
 function iniciarTorneo( miIo) {
   console.log("Iniciando torneo...");
-  solicitarValidadores(miIo);
+  if(IO == null){
+      IO = miIo;
+  }
+  solicitarValidadores();
 }
-function solicitarValidadores(miIo) {
+function solicitarValidadores() {
   mysqlConnection.query(
     "select nombre, peerId, reputacion from usuario as u inner join validador as v on v.nombreValidador = u.nombre;",
     (err, validadores) => {
       if (!err) {
         randomSort(validadores);
 
-        if(validadoresInactivos==null)
+        if(validadoresInactivos==null || validActiConfir.length === 0)
         {
           validInactConfir=validadores;
         }
+        //TO-DO: Verificar listas vacìas
 
         console.log('Candidatos: ');
         console.log(validadores);
         validadoresActivos = torneo(validInactConfir.concat(validActiConfir));
         console.log("Terminando torneo...");
-        tiempoValidadores= (validadoresActivos.length+1)* stepTiempo
-        notificarValidadores(miIo, validadores);
-        setTimeout(iniciarTorneo, tiempoValidadores, miIo);
+        tiempoValidadores= (validadoresActivos.length+1)* stepTiempo;
+
+        notificarValidadores(IO, validadores);
+        setTimeout(revisarConfirmaciones, tiempoValidadores);
       } else {
       }
     }
   );
 }
 
-function notificarValidadores(miIo, validadores)
+function notificarValidadores(IO, validadores)
 {
   var objeto ={validadoresActivos : validadoresActivos,
                 validadores: validadores,
                 tiempo : stepTiempo};
   
-  miIo.emit('torneo', JSON.stringify(objeto));
+  IO.emit('torneo', JSON.stringify(objeto));
 }
 // tomado del algoritmo de Fisher–Yates de ordenamiento aleatorio
 function randomSort(validadores) {
