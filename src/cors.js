@@ -10,13 +10,13 @@ var whitelist = [
 var corsOptionsDelegate = {
     origin: function (origin, callback) {
     console.log('origin: ' + origin);
-    if (whitelist.indexOf(origin) !== -1) {
-      //console.log('ENTRO AL ORIGIN TRUE');
+/*     if (whitelist.indexOf(origin) !== -1) {
+      //console.log('ENTRO AL ORIGIN TRUE'); */
       callback(null, true);
-    } else {
+/*     } else {
       //console.log('ENTRO AL ORIGIN FALSE');
       callback('Deny CORS', false);
-    }
+    } */
   }
 }
 
