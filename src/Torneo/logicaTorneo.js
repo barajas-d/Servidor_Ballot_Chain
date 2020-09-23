@@ -78,6 +78,7 @@ function notificarValidadores(validadores) {
     validadoresActivos: validadoresActivos,
     validadores: validadores,
     tiempo: stepTiempo,
+    inicio: Date.now() + stepTiempo
   };
 
   IO.emit("torneo", JSON.stringify(objeto));

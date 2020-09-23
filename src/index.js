@@ -8,6 +8,7 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const cifrado = require('./cifrado');
 const torneo = require('./Torneo/logicaTorneo');
+const now = require('nano-time');
 //var validadoresActivos = require('./Torneo/logicaTorneo');
 //Variables de torneo
 var tiempoSigTorneo=10000;
@@ -35,7 +36,8 @@ io.on('connection', (socket) => {
         console.log("FIRMADO: " + data['firma'])
         data['firmaKey'] = cifrado.getSignaturePublic();
         console.log("FIRMADO KEY: " + data['firmaKey'])
-
+        data['timestamp'] = now();
+        console.log("TIMESTAMP: " + data['timestamp']);
 
         io.emit('voto', data);
 
