@@ -4,12 +4,14 @@ const { json } = require("express");
 const cantGanadores = 2;
 const stepTiempo = 15000;
 var validadoresActivos = [];
-var validadoresInactivos = null;
+var validadoresInactivos = [];
 var validActiConfir = [];
 var validInactConfir = [];
 var ultimoHash = null;
 var IO = null;
 var tiempoValidadores = 0;
+var inicio = 0;
+var final = 0;
 
 function revisarConfirmaciones() {
   const hash = confirmarHash();
@@ -44,6 +46,11 @@ function confirmarHash() {
 }
 function iniciarTorneo(miIo) {
   console.log("Iniciando torneo...");
+  if (inicio !== final) {
+    final = Date.now();
+  }
+  console.log('Tiempo transcurrido desde el último torneo:', Math.floor((final - inicio)/1000));
+  inicio = Date.now();
   if (IO == null) {
     IO = miIo;
   }
@@ -56,7 +63,7 @@ function solicitarValidadores() {
       if (!err) {
         randomSort(validadores);
 
-        if (validadoresInactivos == null || validActiConfir.length === 0) {
+        if (validadoresInactivos.length === 0 || validActiConfir.length === 0) {
           validInactConfir = validadores;
         }
         //TO-DO: Verificar listas vacìas
@@ -65,7 +72,21 @@ function solicitarValidadores() {
         console.log(validadores);
         validadoresActivos = torneo(validInactConfir.concat(validActiConfir));
         console.log("Terminando torneo...");
-        tiempoValidadores = (validadoresActivos.length + 1) * stepTiempo;
+
+        for (const validador of validadores) {
+          let encontrado = false;
+          for (const activo of validadoresActivos) {
+            if (validador['nombre'] === activo['nombre']){
+              encontrado = true;
+              break;
+            }
+          }
+          if (!encontrado){
+            validadoresInactivos.push(validador);
+          }
+        }
+
+        tiempoValidadores = (validadoresActivos.length + 2) * stepTiempo;
         setValidadorStatus(validadoresActivos.slice(), validadores, true);
       } else {
       }
@@ -147,6 +168,7 @@ function getValidadoresActivos() {
 }
 
 function notificarValidadorActivo(nombre, hashBlockchain) {
+  console.log('Confirma '+nombre+' con hash '+hashBlockchain);
   if (esValidadorActivo(nombre)) {
     validActiConfir.push({ nombre: nombre, hashBlockchain: hashBlockchain });
   } else {
@@ -157,17 +179,21 @@ function notificarValidadorActivo(nombre, hashBlockchain) {
 }
 
 function esValidadorActivo(nombre) {
-  const resultado = validadoresActivos.filter((element) => {
-    nombre === element.nombre;
-  });
-  if (resultado.length > 0) return true;
+  if (validadoresActivos != null || validadoresActivos != undefined){
+    const resultado = validadoresActivos.filter((element) => {
+      nombre === element.nombre;
+    });
+    if (resultado.length > 0) return true;
+  }
   return false;
 }
 function esValidadorInactivo(nombre) {
-  const resultado = validadoresInactivos.filter((element) => {
-    nombre === element.nombre;
-  });
-  if (resultado.length > 0) return true;
+  if (validadoresInactivos != null || validadoresInactivos != undefined){
+    const resultado = validadoresInactivos.filter((element) => {
+      nombre === element.nombre;
+    });
+    if (resultado.length > 0) return true;
+  }
   return false;
 }
 exports.notificarValidadorActivo = notificarValidadorActivo;
