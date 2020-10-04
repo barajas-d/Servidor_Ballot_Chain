@@ -36,9 +36,6 @@ io.on('connection', (socket) => {
         console.log("FIRMADO: " + data['firma'])
         data['firmaKey'] = cifrado.getSignaturePublic();
         console.log("FIRMADO KEY: " + data['firmaKey'])
-        //data['timestamp'] = now();
-        console.log("TIMESTAMP: " + data['timestamp']);
-
         io.emit('voto', data);
 
     });
