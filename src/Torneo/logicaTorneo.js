@@ -14,10 +14,12 @@ var inicio = 0;
 var final = 0;
 
 function revisarConfirmaciones() {
+  console.log('Validadores confirmados', validActiConfir);
   const hash = confirmarHash();
-  validInactConfir = validInactConfir.filter((element) => {
-    hash === element.hashBlockchain;
-  });
+  console.log('HASH CORRECTO-----------------', hash);
+  validInactConfir = validInactConfir.filter((element) =>
+    hash === element.hashBlockchain
+  );
   setValidadorStatus(validadoresActivos.slice(), null, false);
 }
 
@@ -44,6 +46,7 @@ function confirmarHash() {
   }
   return null; //TO-DO: ¿Que se hace en ese caso?
 }
+
 function iniciarTorneo(miIo) {
   console.log("Iniciando torneo...");
   if (inicio !== final) {
@@ -56,6 +59,7 @@ function iniciarTorneo(miIo) {
   }
   solicitarValidadores();
 }
+
 function solicitarValidadores() {
   mysqlConnection.query(
     "select nombre, peerId, reputacion from usuario as u inner join validador as v on v.nombreValidador = u.nombre;",
@@ -63,14 +67,18 @@ function solicitarValidadores() {
       if (!err) {
         randomSort(validadores);
 
-        if (validadoresInactivos.length === 0 || validActiConfir.length === 0) {
+        let participantes;
+        if (validActiConfir.length === 0 || validadoresActivos.length === 0) {
           validInactConfir = validadores;
+          participantes = validadores;
+        } else{
+          participantes = validInactConfir.concat(validActiConfir);
         }
         //TO-DO: Verificar listas vacìas
 
         console.log("Candidatos: ");
         console.log(validadores);
-        validadoresActivos = torneo(validInactConfir.concat(validActiConfir));
+        validadoresActivos = torneo(participantes);
         console.log("Terminando torneo...");
 
         for (const validador of validadores) {
@@ -101,6 +109,9 @@ function notificarValidadores(validadores) {
     tiempo: stepTiempo,
     inicio: Date.now() + stepTiempo
   };
+
+  validActiConfir = [];
+  validInactConfir = [];
 
   IO.emit("torneo", JSON.stringify(objeto));
   setTimeout(revisarConfirmaciones, tiempoValidadores);
@@ -139,8 +150,9 @@ function torneo(validadores) {
     return torneo(ganadores);
   }
 }
+
 function setValidadorStatus(validActivCopy, validadores, status) {
-  if (validActivCopy.length == 0) {
+  if (validActivCopy.length === 0) {
     if (status) {
       notificarValidadores(validadores);
     } else {
@@ -180,18 +192,19 @@ function notificarValidadorActivo(nombre, hashBlockchain) {
 
 function esValidadorActivo(nombre) {
   if (validadoresActivos != null || validadoresActivos != undefined){
-    const resultado = validadoresActivos.filter((element) => {
-      nombre === element.nombre;
-    });
+    const resultado = validadoresActivos.filter((element) => 
+      nombre === element.nombre
+    );
     if (resultado.length > 0) return true;
   }
   return false;
 }
+
 function esValidadorInactivo(nombre) {
   if (validadoresInactivos != null || validadoresInactivos != undefined){
-    const resultado = validadoresInactivos.filter((element) => {
-      nombre === element.nombre;
-    });
+    const resultado = validadoresInactivos.filter((element) =>
+      nombre === element.nombre
+    );
     if (resultado.length > 0) return true;
   }
   return false;
