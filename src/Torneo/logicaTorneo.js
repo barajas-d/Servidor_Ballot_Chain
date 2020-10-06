@@ -16,7 +16,7 @@ var final = 0;
 function revisarConfirmaciones() {
   console.log('Validadores confirmados', validActiConfir);
   const hash = confirmarHash();
-  console.log('HASH CORRECTO-----------------', hash);
+  console.log('-------HASH CORRECTO-------', hash);
   validInactConfir = validInactConfir.filter((element) =>
     hash === element.hashBlockchain
   );
@@ -49,11 +49,14 @@ function confirmarHash() {
 
 function iniciarTorneo(miIo) {
   console.log("Iniciando torneo...");
-  if (inicio !== final) {
+
+  if (final !== inicio){
     final = Date.now();
+    console.log('Tiempo transcurrido desde el último torneo:', Math.floor((final - inicio)/1000));
   }
-  console.log('Tiempo transcurrido desde el último torneo:', Math.floor((final - inicio)/1000));
+
   inicio = Date.now();
+
   if (IO == null) {
     IO = miIo;
   }
@@ -68,7 +71,8 @@ function solicitarValidadores() {
         randomSort(validadores);
 
         let participantes;
-        validActiConfir = trasnformarValidadoresActConf()
+        validActiConfir = transformarValidadoresConf(validActiConfir, validadoresActivos);
+        validInactConfir = transformarValidadoresConf(validInactConfir, validadoresInactivos);
         if (validActiConfir.length === 0 || validadoresActivos.length === 0) {
           validInactConfir = validadores;
           participantes = validadores;
@@ -78,7 +82,7 @@ function solicitarValidadores() {
         //TO-DO: Verificar listas vacìas
 
         console.log("Candidatos: ");
-        console.log(validadores);
+        console.log(participantes);
         validadoresActivos = torneo(participantes);
         console.log("Terminando torneo...");
 
@@ -113,7 +117,8 @@ function notificarValidadores(validadores) {
 
   validActiConfir = [];
   validInactConfir = [];
-
+  console.log('Notificando ganadores');
+  console.log('El siguiente torneo comienza en', Math.floor(tiempoValidadores)/1000);
   IO.emit("torneo", JSON.stringify(objeto));
   setTimeout(revisarConfirmaciones, tiempoValidadores);
 }
@@ -211,10 +216,10 @@ function esValidadorInactivo(nombre) {
   return false;
 }
 
-function trasnformarValidadoresActConf(){
+function transformarValidadoresConf(confirmados, validadores){
   const respuesta = [];
-  for (const validadorConfirmado of   validActiConfir ) {
-    respuesta.push(validadoresActivos.filter( validadorActivo => validadorActivo.nombre === validadorConfirmado.nombre )[0])
+  for (const confirmado of confirmados) {
+    respuesta.push(validadores.filter( validador => validador.nombre === confirmado.nombre )[0])
   }
   return respuesta;
 }
