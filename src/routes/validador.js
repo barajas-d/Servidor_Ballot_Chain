@@ -74,6 +74,7 @@ router.post('/confirmarBlockChainActualizada', verificarToken, (req, res) => {
     const nombre = req.userId;
     const { hashBlockchain } = req.body;
     logicaTorneo.notificarValidadorActivo(nombre, hashBlockchain);
+    res.json({Status: 'Ack'});
 });
 
 module.exports = router; 

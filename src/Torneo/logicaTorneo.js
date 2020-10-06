@@ -68,6 +68,7 @@ function solicitarValidadores() {
         randomSort(validadores);
 
         let participantes;
+        validActiConfir = trasnformarValidadoresActConf()
         if (validActiConfir.length === 0 || validadoresActivos.length === 0) {
           validInactConfir = validadores;
           participantes = validadores;
@@ -208,6 +209,14 @@ function esValidadorInactivo(nombre) {
     if (resultado.length > 0) return true;
   }
   return false;
+}
+
+function trasnformarValidadoresActConf(){
+  const respuesta = [];
+  for (const validadorConfirmado of   validActiConfir ) {
+    respuesta.push(validadoresActivos.filter( validadorActivo => validadorActivo.nombre === validadorConfirmado.nombre )[0])
+  }
+  return respuesta;
 }
 exports.notificarValidadorActivo = notificarValidadorActivo;
 exports.iniciarTorneo = iniciarTorneo;
