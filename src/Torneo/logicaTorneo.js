@@ -14,7 +14,8 @@ var inicio = 0;
 var final = 0;
 
 function revisarConfirmaciones() {
-  console.log('Validadores confirmados', validActiConfir);
+  console.log('Validadores activos confirmados', validActiConfir);
+  console.log('Validadores inactivos confirmados', validInactConfir);
   const hash = confirmarHash();
   console.log('-------HASH CORRECTO-------', hash);
   validInactConfir = validInactConfir.filter((element) =>
