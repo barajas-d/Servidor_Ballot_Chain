@@ -4,7 +4,6 @@ const secretKey= '123456789'
 
 function verificarToken(req, res, next)
 {
-    //console.log(req.headers.authorization);
     if(!req.headers.authorization)
     {
         return res.status(401).send('Solicitud no autorizada');
@@ -14,12 +13,9 @@ function verificarToken(req, res, next)
     {
         return res.status(401).send('Solicitud no autorizada 2');
     }
-    //console.log('token: '+ token)
 
     const datos= jwt.verify(token, secretKey)
-    //console.log(datos);
     req.userId= datos._id;
-    console.log(req.userId)
     next();
 
 }

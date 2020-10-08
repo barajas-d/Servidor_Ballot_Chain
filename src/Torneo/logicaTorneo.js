@@ -1,7 +1,7 @@
 const router = require("../routes/validador");
 const mysqlConnection = require("../dataBase");
 const { json } = require("express");
-const cantGanadores = 2;
+const cantGanadores = 5;
 const stepTiempo = 15000;
 var validadoresActivos = [];
 var validadoresInactivos = [];
@@ -14,10 +14,7 @@ var inicio = 0;
 var final = 0;
 
 function revisarConfirmaciones() {
-  console.log('Validadores activos confirmados', validActiConfir);
-  console.log('Validadores inactivos confirmados', validInactConfir);
   const hash = confirmarHash();
-  console.log('-------HASH CORRECTO-------', hash);
   validInactConfir = validInactConfir.filter((element) =>
     hash === element.hashBlockchain
   );
@@ -49,15 +46,11 @@ function confirmarHash() {
 }
 
 function iniciarTorneo(miIo) {
-  console.log("Iniciando torneo...");
-
   if (final !== inicio){
     final = Date.now();
     console.log('Tiempo transcurrido desde el último torneo:', Math.floor((final - inicio)/1000));
   }
-
   inicio = Date.now();
-
   if (IO == null) {
     IO = miIo;
   }
@@ -74,6 +67,7 @@ function solicitarValidadores() {
         let participantes;
         validActiConfir = transformarValidadoresConf(validActiConfir, validadoresActivos);
         validInactConfir = transformarValidadoresConf(validInactConfir, validadoresInactivos);
+
         if (validActiConfir.length === 0 || validadoresActivos.length === 0) {
           validInactConfir = validadores;
           participantes = validadores;
@@ -84,9 +78,10 @@ function solicitarValidadores() {
 
         console.log("Candidatos: ");
         console.log(participantes);
+        validadoresActivos = [];
         validadoresActivos = torneo(participantes);
-        console.log("Terminando torneo...");
 
+        validadoresInactivos = [];
         for (const validador of validadores) {
           let encontrado = false;
           for (const activo of validadoresActivos) {
@@ -115,11 +110,8 @@ function notificarValidadores(validadores) {
     tiempo: stepTiempo,
     inicio: Date.now() + stepTiempo
   };
-
   validActiConfir = [];
   validInactConfir = [];
-  console.log('Notificando ganadores');
-  console.log('El siguiente torneo comienza en', Math.floor(tiempoValidadores)/1000);
   IO.emit("torneo", JSON.stringify(objeto));
   setTimeout(revisarConfirmaciones, tiempoValidadores);
 }
@@ -134,8 +126,6 @@ function randomSort(validadores) {
 }
 
 function torneo(validadores) {
-  console.log("validadores.length:" + validadores.length);
-  console.log("cantGanadores: " + cantGanadores);
   if (cantGanadores >= validadores.length) {
     return validadores;
   } else {
@@ -152,8 +142,6 @@ function torneo(validadores) {
       }
       i += 2;
     }
-    console.log("ganadores: ");
-    console.log(ganadores);
     return torneo(ganadores);
   }
 }
@@ -173,7 +161,6 @@ function setValidadorStatus(validActivCopy, validadores, status) {
     [status, validador.peerId],
     (err, rows) => {
       if (!err) {
-        console.log("funciono");
         setValidadorStatus(validActivCopy, validadores, status);
       } else {
         console.log("error en dataBase");
@@ -187,7 +174,6 @@ function getValidadoresActivos() {
 }
 
 function notificarValidadorActivo(nombre, hashBlockchain) {
-  console.log('Confirma '+nombre+' con hash '+hashBlockchain);
   if (esValidadorActivo(nombre)) {
     validActiConfir.push({ nombre: nombre, hashBlockchain: hashBlockchain });
   } else {
@@ -224,6 +210,7 @@ function transformarValidadoresConf(confirmados, validadores){
   }
   return respuesta;
 }
+
 exports.notificarValidadorActivo = notificarValidadorActivo;
 exports.iniciarTorneo = iniciarTorneo;
 exports.validadoresActivos = getValidadoresActivos;
