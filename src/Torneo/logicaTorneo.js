@@ -15,7 +15,11 @@ var final = 0;
 
 function revisarConfirmaciones() {
   const hash = confirmarHash();
+  console.log('----Hash ganador----', hash);
   validInactConfir = validInactConfir.filter((element) =>
+    hash === element.hashBlockchain
+  );
+  validActiConfir = validActiConfir.filter((element) =>
     hash === element.hashBlockchain
   );
   setValidadorStatus(validadoresActivos.slice(), null, false);
@@ -64,10 +68,16 @@ function solicitarValidadores() {
       if (!err) {
         randomSort(validadores);
 
+        console.log('Confirmaciones activos', validActiConfir);
+        console.log('Confirmaciones activos', validadoresActivos);
+        console.log('Confirmaciones inactivos', validInactConfir);
+        console.log('Confirmaciones inactivos', validadoresInactivos);
+
         let participantes;
         validActiConfir = transformarValidadoresConf(validActiConfir, validadoresActivos);
         validInactConfir = transformarValidadoresConf(validInactConfir, validadoresInactivos);
-
+        console.log('Activos confirmados', validActiConfir);
+        console.log('Inactivos confirmados', validInactConfir);
         if (validActiConfir.length === 0 || validadoresActivos.length === 0) {
           validInactConfir = validadores;
           participantes = validadores;
@@ -174,6 +184,7 @@ function getValidadoresActivos() {
 }
 
 function notificarValidadorActivo(nombre, hashBlockchain) {
+  console.log('El validador '+nombre+' confirma con hash '+hashBlockchain);
   if (esValidadorActivo(nombre)) {
     validActiConfir.push({ nombre: nombre, hashBlockchain: hashBlockchain });
   } else {
