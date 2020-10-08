@@ -23,7 +23,7 @@ router.post('/usuarioValidador', (req, res) => {
 
 router.get('/validadores', cors(corsOptionsDelegate), (req, res) => {
     console.log('entry jaja');
-    mysqlConnection.query('SELECT * FROM validador where isValidador = ?', [true], (err, rows) => {
+    mysqlConnection.query('SELECT * FROM validador', (err, rows) => {
         if(!err){
             res.json(rows);
         }
@@ -74,6 +74,7 @@ router.post('/confirmarBlockChainActualizada', verificarToken, (req, res) => {
     const nombre = req.userId;
     const { hashBlockchain } = req.body;
     logicaTorneo.notificarValidadorActivo(nombre, hashBlockchain);
+    res.json({Status: 'Ack'});
 });
 
 module.exports = router; 

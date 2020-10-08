@@ -8,6 +8,7 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const cifrado = require('./cifrado');
 const torneo = require('./Torneo/logicaTorneo');
+//const now = require('nano-time');
 //var validadoresActivos = require('./Torneo/logicaTorneo');
 //Variables de torneo
 var tiempoSigTorneo=10000;
@@ -18,7 +19,6 @@ io.on('connection', (socket) => {
     socket.emit('voto', 'ListenerEstablecido');
 
     socket.on('voto', data => {
-        console.log('entro un mensaje: ' + data['peerValidador']);
 
         //Aqui debo validar firmas y reempaquetar
         
@@ -32,11 +32,7 @@ io.on('connection', (socket) => {
 
         
         data['firma'] = cifrado.sign(data['voto'])
-        console.log("FIRMADO: " + data['firma'])
         data['firmaKey'] = cifrado.getSignaturePublic();
-        console.log("FIRMADO KEY: " + data['firmaKey'])
-
-
         io.emit('voto', data);
 
     });
@@ -95,14 +91,11 @@ app.listen(3000, () =>{
 });
 
 peerServer.on('connection', (client) => {
-    //console.log(client.getId());
     validadores.registrarValidador(client.getId());
-    //console.log("Peer conectado");
 });
 
 peerServer.on('disconnect', (client) => {
     validadores.eliminarValidador(client.getId());
-    //console.log("Peer desconectado")
 });
 
-setTimeout(torneo.iniciarTorneo, tiempoSigTorneo, io);
+torneo.iniciarTorneo(io);

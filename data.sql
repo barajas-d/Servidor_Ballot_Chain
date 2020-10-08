@@ -163,7 +163,7 @@ INSERT INTO credencial (id, clave, isValid, votacion) VALUES(3,'ghi',True, 3);
 INSERT INTO credencial (id, clave, isValid, votacion) VALUES(4,'jkl',False, 1);
 
 INSERT INTO usuario (nombre, correo, contrasena) VALUES ('Alice', 'alice@gmail.com', '202cb962ac59075b964b07152d234b70');
-INSERT INTO usuario (nombre, correo, contrasena) VALUES ('Bob', 'bob@gmail.com', '123');
+INSERT INTO usuario (nombre, correo, contrasena) VALUES ('Bob', 'bob@gmail.com', '202cb962ac59075b964b07152d234b70');
 INSERT INTO usuario (nombre, correo, contrasena) VALUES ('Brandonn', 'brandonn@gmail.com', '202cb962ac59075b964b07152d234b70');
 
 INSERT INTO usuario (nombre, correo) VALUES 
