@@ -10,7 +10,9 @@ const verificarToken = require('../token');
 router.get('/participanteUsuario', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     const nombre = req.userId;
     mysqlConnection.query(
-        'SELECT id, titulo, autor, fechaLimite, plantillaAsociada, tipoDeVotacion, descripcion, votos FROM participante NATURAL JOIN votacion WHERE participante.nombre = ?',
+        'SELECT v.id, titulo, autor, fechaLimite, plantillaAsociada, tipoDeVotacion, descripcion, votos '+
+        'FROM participante AS p INNER JOIN votacion as v ON p.idVotacion = v.id '+
+        'WHERE p.nombre = ?',
         [nombre],  (err, rows, fields) => {
         if(!err){
             res.json(rows);
@@ -24,7 +26,9 @@ router.get('/participanteUsuario', verificarToken, cors(corsOptionsDelegate), (r
 router.get('/participanteVotacion/:id', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     const { id } = req.params;
     mysqlConnection.query(
-        'SELECT nombre, saldo, correo, idValidador, bloqAprobados, bloqPropuestos, bloqRevisados, bloqValidados FROM participante NATURAL JOIN usuario WHERE participante.id = ?',
+        'SELECT u.nombre, saldo, correo, idValidador, bloqAprobados, bloqPropuestos, bloqRevisados, bloqValidados '+
+        'FROM participante AS p INNER JOIN usuario AS u ON p.nombre = u.nombre '+
+        'WHERE p.idVotacion = ?',
         [id],  (err, rows, fields) => {
         if(!err){
             res.json(rows);

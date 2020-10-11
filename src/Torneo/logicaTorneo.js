@@ -183,6 +183,10 @@ function getValidadoresActivos() {
   return validadoresActivos;
 }
 
+function getValidadores() {
+  return validadores;
+}
+
 function notificarValidadorActivo(nombre, hashBlockchain) {
   console.log('El validador '+nombre+' confirma con hash '+hashBlockchain);
   if (esValidadorActivo(nombre)) {
@@ -225,3 +229,4 @@ function transformarValidadoresConf(confirmados, validadores){
 exports.notificarValidadorActivo = notificarValidadorActivo;
 exports.iniciarTorneo = iniciarTorneo;
 exports.validadoresActivos = getValidadoresActivos;
+exports.validadoresActivos = getValidadores;
