@@ -63,7 +63,7 @@ function iniciarTorneo(miIo) {
 
 function solicitarValidadores() {
   mysqlConnection.query(
-    "select nombre, peerId, reputacion from usuario as u inner join validador as v on v.nombreValidador = u.nombre;",
+    "select nombre, peerId, reputacion from usuario as u inner join validador as v on v.nombreValidador = u.nombre WHERE nombreValidador IS NOT NULL;",
     (err, validadores) => {
       if (!err) {
         randomSort(validadores);

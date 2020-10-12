@@ -23,7 +23,7 @@ router.post('/usuarioValidador', (req, res) => {
 
 router.get('/validadores', cors(corsOptionsDelegate), (req, res) => {
     console.log('entry jaja');
-    mysqlConnection.query('SELECT * FROM validador', (err, rows) => {
+    mysqlConnection.query('SELECT * FROM validador WHERE nombreValidador IS NOT NULL', (err, rows) => {
         if(!err){
             res.json(rows);
         }
