@@ -63,7 +63,7 @@ function iniciarTorneo(miIo) {
 
 function solicitarValidadores() {
   mysqlConnection.query(
-    "select nombre, peerId, reputacion from usuario as u inner join validador as v on v.nombreValidador = u.nombre;",
+    "select nombre, peerId, reputacion from usuario as u inner join validador as v on v.nombreValidador = u.nombre WHERE nombreValidador IS NOT NULL;",
     (err, validadores) => {
       if (!err) {
         randomSort(validadores);
@@ -183,6 +183,10 @@ function getValidadoresActivos() {
   return validadoresActivos;
 }
 
+function getValidadores() {
+  return validadores;
+}
+
 function notificarValidadorActivo(nombre, hashBlockchain) {
   console.log('El validador '+nombre+' confirma con hash '+hashBlockchain);
   if (esValidadorActivo(nombre)) {
@@ -225,3 +229,4 @@ function transformarValidadoresConf(confirmados, validadores){
 exports.notificarValidadorActivo = notificarValidadorActivo;
 exports.iniciarTorneo = iniciarTorneo;
 exports.validadoresActivos = getValidadoresActivos;
+exports.validadoresActivos = getValidadores;
