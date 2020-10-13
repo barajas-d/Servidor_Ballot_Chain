@@ -61,7 +61,7 @@ const peerServer = ExpressPeerServer(httpserver, {
     path: '/'
 });
  
-const peer_port = process.env.PORTPEER || 9000;
+const peer_port = process.env.PORTPEER || 5000;
 
 httpserver.listen(peer_port, function () {
     console.log("listening peer connections on : " + peer_port);
