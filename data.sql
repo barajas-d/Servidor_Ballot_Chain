@@ -56,9 +56,9 @@ CREATE TABLE usuario(
 CREATE TABLE votacion(
     id INT NOT NULL AUTO_INCREMENT,
     titulo VARCHAR(50) DEFAULT NULL,
-    autor VARCHAR(50) DEFAULT 'Santiago',
-    fechaInicio DATE DEFAULT NULL,
-    fechaLimite DATE DEFAULT NULL,
+    autor VARCHAR(50) NOT NULL,
+    fechaInicio DATE,
+    fechaLimite DATE,
     plantillaAsociada INT DEFAULT NULL,
     tipoDeVotacion INT NOT NULL,
     descripcion VARCHAR(200) DEFAULT NULL,
@@ -259,3 +259,4 @@ update usuario set reputacion= 100 where nombre ='Bob';
 update usuario set reputacion= 0 where nombre ='Usuario1';
 
 
+commit;
