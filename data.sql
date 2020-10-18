@@ -215,12 +215,12 @@ INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Diego', 'Opcion de e
 INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Santiago', 'Opcion de ejemplo', 6);
 INSERT INTO opcion (nombre, descripcion, votacion) VALUES ('Brandonn', 'Opcion de ejemplo', 6);
 
-##INSERT INTO participante (id, nombre) VALUES (4, 'Alice');
-##INSERT INTO participante (id, nombre) VALUES (6, 'Alice');
-##INSERT INTO participante (id, nombre) VALUES (4, 'Bob');
-##INSERT INTO participante (id, nombre) VALUES (4, 'Brandonn');
-##INSERT INTO participante (id, nombre) VALUES (5, 'Brandonn');
-##INSERT INTO participante (id, nombre) VALUES (6, 'Brandonn');
+INSERT INTO participante (id, nombre, idVotacion) VALUES (1, 'Alice', 1);
+INSERT INTO participante (id, nombre, idVotacion) VALUES (2, 'Alice', 1);
+INSERT INTO participante (id, nombre, idVotacion) VALUES (3, 'Bob', 2);
+INSERT INTO participante (id, nombre, idVotacion) VALUES (4, 'Brandonn',1);
+INSERT INTO participante (id, nombre, idVotacion) VALUES (5, 'Brandonn',2);
+INSERT INTO participante (id, nombre, idVotacion) VALUES (6, 'Brandonn',3);
 
 INSERT INTO votacion (autor, titulo, fechaLimite, tipoDeVotacion, descripcion) VALUES ('Santiago', 'TituloVotacion', '2020-10-20', 1, 'ejemplo votacion popular');
 INSERT INTO votacion (autor, titulo, fechaLimite, tipoDEVotacion, descripcion) VALUES ('Santiago', 'TituloVotacion', '2020-10-20', 1, 'ejemplo votacion ranking');
@@ -258,5 +258,7 @@ update usuario set reputacion= 80 where nombre ='Alice';
 update usuario set reputacion= 100 where nombre ='Bob';
 update usuario set reputacion= 0 where nombre ='Usuario1';
 
+select nombre, idVotacion from participante where nombre ='Brandonn' and idVotacion = 1;
 
 commit;
+

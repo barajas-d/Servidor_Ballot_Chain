@@ -8,6 +8,7 @@ const corsOptionsDelegate = require('../cors');
 const jwt = require('jsonwebtoken');
 
 const secretKey = '123456789'
+let aux ;
 
 router.get('/votacion', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     mysqlConnection.query('SELECT * FROM votacion', (err, rows) => {
@@ -32,6 +33,54 @@ router.get('/votacion/:id', verificarToken, cors(corsOptionsDelegate), (req, res
     })
 });
 
+router.get('/votar/:id', verificarToken, cors(corsOptionsDelegate), async (req, res) => {
+    const id = +req.params.id;
+    //Ver si usuario está autorizado para votar
+    const nombreUsuario = req.userId;
+    const usuarioEsValido = false;
+    try {
+        votacionesAutorizadas = await buscarParticipanteUsuario(nombreUsuario, id);
+    } catch (error) { 
+        res.json('error');
+        return;
+    }
+    
+    //Solicitar info voto
+    if(votacionesAutorizadas !== 'notAuthorized'){    
+        mysqlConnection.query('SELECT * FROM votacion WHERE id = ?', [id],  (err, rows, fields) => {
+            if(!err){
+                res.json(rows[0]);
+            }
+            else{
+                console.log('error en dataBase');
+                res.json({nombre: undefined});
+            }
+        })
+    }else
+    {
+        res.json({nombre: undefined});
+    }
+    
+});
+
+function buscarParticipanteUsuario(nombreUsuario, id){
+    return new Promise ((resolve, reject) => {
+        mysqlConnection.query('select nombre, idVotacion from participante where nombre =? and idVotacion = ?', [nombreUsuario, id],  (err, rows, fields) => {
+            if(!err){
+                if(rows.length > 0){
+                    resolve(rows)
+    
+                }
+                else{
+                    reject('notAuthorized');
+                }
+            }
+            else{
+                reject('notAuthorized');
+            }
+        })
+    }) 
+}
 router.post('/votacionAdd', verificarToken, cors(corsOptionsDelegate), (req, res) => {
 
     console.log('entro');
