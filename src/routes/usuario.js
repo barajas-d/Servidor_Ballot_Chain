@@ -60,11 +60,11 @@ router.get('/usuario-existe/:nombre', cors(corsOptionsDelegate), (req, res) => {
             if(rows.length > 0){
                 res.json(true);
             }else{
-                res.json(true);
+                res.json(false);
             }
         }
         else{
-            res.json(true);
+            res.json(false);
         }
     })
 });
@@ -89,10 +89,6 @@ router.put('/usuarioPut', verificarToken, cors(corsOptionsDelegate), (req, res) 
 });
 
 router.post('/usuarioAdd', cors(corsOptionsDelegate), (req, res) => {
-
-    console.log("llegue----------------------------------------------------");
-    console.log(req.body);
-    console.log("----------------------------------------------------------")
     const {  nombre, correo, contrasena } = req.body;
     const token = jwt.sign({_id: nombre},secretKey);
     const query = "INSERT INTO usuario ( nombre, correo, contrasena ) VALUES (?, ?, ?)";
