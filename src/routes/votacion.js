@@ -43,41 +43,46 @@ router.post('/votacionAdd', verificarToken, cors(corsOptionsDelegate), (req, res
 
     const { titulo, autor, fechaInicio, fechaLimite, tipoDeVotacion, descripcion, votos, opciones, participantes} = req.body;
     const query = "INSERT INTO votacion (titulo, autor, fechaInicio, fechaLimite, tipoDeVotacion, descripcion, votos) values (?, ?, ?, ?, ?, ?, ?);";
+    const queryParticipante = "INSERT INTO participante (idVotacion, nombre) VALUES (?, ?);";
+    const queryOpcion = "INSERT INTO opcion (descripcion, nombre, votacion) VALUES (?, ?, ?);";
+    const deleteVotacion = "DELETE FROM votacion WHERE votacion.id = ?;";
+    let error = false;
     
-    opciones.forEach(element => {
-        console.log("Opcion: " + element['nombre'] + " " + element['descripcion']);
-    });
-    
-    participantes.forEach(element => {
-        console.log("Participante: " + element);
-    });
     mysqlConnection.query(query, [titulo, autor, transformarFecha(fechaInicio), transformarFecha(fechaLimite), tipoDeVotacion, descripcion, votos], (err, rows, fields) => {
         if(!err) {
-           /* if(cantCredenciales == undefined || cantCredenciales == 0){
-                res.json({Status: "Votacion creada con exito", Id: rows["insertId"], Credenciales: 0});
-            }
-            else{
-                const queryCrearCredencial = "INSERT INTO credencial(votacion) VALUES (?)";
-                const queryActualizarCredencial = "UPDATE credencial SET clave = ?, isValid = ? where credencial.id = ?";
-                var respuesta = [];
-                var credencialPreProcesada;
-                var credencial;
-                for (let i = 0; i < cantCredenciales; i++) {
-                    mysqlConnection.query(queryCrearCredencial, [rows["insertId"]], (errCrear, rowsCrear) => {
-                        if(!errCrear) {
-                            credencialPreProcesada = rows["insertId"].toString() + rowsCrear["insertId"].toString();
-                            credencial = crypto.createHash('md5').update(credencialPreProcesada).digest("hex");
-                            mysqlConnection.query(queryActualizarCredencial, [credencial, true, rowsCrear['insertId']]);
-                        }
-                    });
-                }*/
-                res.json({Status: "Votacion creada con exito", Id: rows["insertId"], Error:false});
-                console.log("funciona");
-                //}
-        } else {
-            res.json({Status: 'Error al crear la votacion', Error: true});
-            console.log("no funciona: " + err);
 
+            let idVotacion = rows["insertId"];
+
+            participantes.forEach(element => {
+                console.log("Participante: " + element);
+                mysqlConnection.query(queryParticipante, [rows["insertId"], element], (errParticipante, rowsParticipante, fieldsParticipante) => {
+                    if(errParticipante){
+                        this.error = true;
+                    }
+                });
+            });
+
+            opciones.forEach(element => {
+                console.log("Opcion: " + element['nombre'] + " " + element['descripcion']);
+                mysqlConnection.query(queryOpcion, [element['descripcion'], element['nombre'], rows["insertId"]], (errOpcion, rowsOpcion, fieldsOpcion) => {
+                    if(errOpcion){
+                        this.error = true;
+                    }
+                });
+            });
+
+
+                
+        }else {
+            this.error = true;
+        }
+        if(this.error){
+            res.json({Status: 'Error al crear la votacion', Error: true});
+            mysqlConnection.query(deleteVotacion, (err, rows, fields) => {});
+        }
+        else{
+            res.json({Status: "Votacion creada con exito", Id: rows["insertId"], Error:false});
+            mysqlConnection.query("commit");
         }
     });
 });
