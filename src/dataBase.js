@@ -4,7 +4,7 @@ const mysqlConnection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     database: 'ballot_chain',
-    port: 3306
+    port: 3307
 });
 
 mysqlConnection.connect(function (err){
