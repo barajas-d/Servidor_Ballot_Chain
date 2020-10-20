@@ -55,7 +55,7 @@ router.get('/participanteVotacionNum/:id', verificarToken, cors(corsOptionsDeleg
 
 router.get('/participanteDelete/:id/:nombre', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     const { id, nombre } = req.params;
-    const query = "DELETE FROM participante WHERE id = ? AND nombre = ?";
+    const query = "DELETE FROM participante WHERE idVotacion = ? AND nombre = ?";
     mysqlConnection.query(query, [id, nombre], (err, rows) => {
         if(!err){
             if(rows.affectedRows == 0){
