@@ -52,6 +52,23 @@ router.get('/usuarioId', verificarToken, cors(corsOptionsDelegate), (req, res) =
     })
 });
 
+router.get('/usuario-existe/:nombre', cors(corsOptionsDelegate), (req, res) => {
+    const nombre = req.params.nombre;
+
+    mysqlConnection.query('SELECT * FROM usuario WHERE nombre = ?', [nombre],  (err, rows, fields) => {
+        if(!err){
+            if(rows.length > 0){
+                res.json(true);
+            }else{
+                res.json(false);
+            }
+        }
+        else{
+            res.json(false);
+        }
+    })
+});
+
 router.put('/usuarioPut', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     const nombreId = req.userId;
     const { nombre, saldo, correo } = req.body;
@@ -72,10 +89,6 @@ router.put('/usuarioPut', verificarToken, cors(corsOptionsDelegate), (req, res) 
 });
 
 router.post('/usuarioAdd', cors(corsOptionsDelegate), (req, res) => {
-
-    console.log("llegue----------------------------------------------------");
-    console.log(req.body);
-    console.log("----------------------------------------------------------")
     const {  nombre, correo, contrasena } = req.body;
     const token = jwt.sign({_id: nombre},secretKey);
     const query = "INSERT INTO usuario ( nombre, correo, contrasena ) VALUES (?, ?, ?)";
