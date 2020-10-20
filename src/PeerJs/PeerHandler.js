@@ -16,8 +16,8 @@ var peer_id;
 var mensajesServicio;
 var inicializar = function() {
     peer = new peerModule.Peer({
-        host: location.hostname,
-        port: (location.protocol === 'https:' ? 443 : 9000),
+        host: '186.81.169.18',
+        port: 5000,
         path: '/peerjs'
     });
     peer.on('open', function () {
