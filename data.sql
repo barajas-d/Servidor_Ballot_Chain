@@ -64,8 +64,8 @@ CREATE TABLE votacion(
     descripcion VARCHAR(200) DEFAULT NULL,
     votos INT DEFAULT 1,
     PRIMARY KEY(id),
-    FOREIGN KEY(autor) REFERENCES usuario(nombre) ON UPDATE CASCADE,
-    FOREIGN KEY(tipoDeVotacion) REFERENCES tipoVotacion(id)
+    FOREIGN KEY(autor) REFERENCES usuario(nombre) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(tipoDeVotacion) REFERENCES tipoVotacion(id) ON DELETE CASCADE
 );
 
 CREATE TABLE  credencial(
