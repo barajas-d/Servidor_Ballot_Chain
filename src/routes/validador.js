@@ -77,4 +77,11 @@ router.post('/confirmarBlockChainActualizada', verificarToken, (req, res) => {
     res.json({Status: 'Ack'});
 });
 
-module.exports = router; 
+router.post('/reportarValidador', verificarToken, (req, res) => {
+    const nombre = req.userId;
+    const { validadorReportado } = req.body;
+    logicaTorneo.reportarValidador(validadorReportado);
+    res.json({Status: 'Ack'});
+});
+
+module.exports = router;

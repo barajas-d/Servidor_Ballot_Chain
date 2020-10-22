@@ -34,7 +34,7 @@ CREATE TABLE usuario(
     nombre VARCHAR(50) NOT NULL,
     saldo DECIMAL(14,2) DEFAULT 0,
     correo VARCHAR(50) NOT NULL,
-    contrasena VARCHAR(64) DEFAULT NULL,
+    contrasena VARCHAR(256) DEFAULT NULL,
     idValidador VARCHAR(64) DEFAULT NULL,
 	reputacion INT NOT NULL Default 40 check(reputacion between 0 and 100),
     bloqAprobados INT DEFAULT 0,

@@ -27,5 +27,18 @@ function eliminarValidador(peerId){
     });
 }
 
+function eliminarValidadores() {
+    const query = "DELETE from validador";
+    return new Promise((resolve, reject) => {mysqlConnection.query(query, (err, rows) => {
+        if(!err){
+            resolve(true);
+        }
+        else{
+            reject(false);
+        }
+    })});
+}
+
 exports.registrarValidador = registrarValidador;
 exports.eliminarValidador = eliminarValidador;
+exports.eliminarValidadores = eliminarValidadores;

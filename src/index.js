@@ -99,4 +99,12 @@ peerServer.on('disconnect', (client) => {
     validadores.eliminarValidador(client.getId());
 });
 
-torneo.iniciarTorneo(io);
+deleteValidadores().then(() => {torneo.iniciarTorneo(io)});
+
+async function deleteValidadores() {
+    try {
+        validadores.eliminarValidadores();
+    } catch (error) {
+        console.log(error);
+    }
+}
