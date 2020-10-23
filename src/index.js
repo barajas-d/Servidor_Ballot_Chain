@@ -92,10 +92,12 @@ app.listen(3000, () =>{
 });
 
 peerServer.on('connection', (client) => {
+    console.log('Validador conectado');
     validadores.registrarValidador(client.getId());
 });
 
 peerServer.on('disconnect', (client) => {
+    console.log('validador desconectado');
     validadores.eliminarValidador(client.getId());
 });
 

@@ -258,7 +258,7 @@ function castigarValidador(validadorReportado) {
 }
 
 function iniciarReportes() {
-  console.log('Activos al iniciar portortados', validadoresActivos);
+  console.log('Activos al iniciar reportados', validadoresActivos);
   reportados = new Map();
   for (const validador of validadoresActivos) {
     reportados.set(validador.nombre, 0);
