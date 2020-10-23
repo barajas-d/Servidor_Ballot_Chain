@@ -1,7 +1,7 @@
 const router = require("../routes/validador");
 const mysqlConnection = require("../dataBase");
 const { json } = require("express");
-const cantGanadores = 5;
+const cantGanadores = 2;
 const stepTiempo = 15000;
 var validadoresActivos = [];
 var validadoresInactivos = [];
