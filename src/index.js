@@ -8,6 +8,7 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const cifrado = require('./cifrado');
 const torneo = require('./Torneo/logicaTorneo');
+const seudonimo = require('./Seudonimos/seudonimo');
 //const now = require('nano-time');
 //var validadoresActivos = require('./Torneo/logicaTorneo');
 //Variables de torneo
@@ -33,6 +34,8 @@ io.on('connection', (socket) => {
         
         data['firma'] = cifrado.sign(data['voto'])
         data['firmaKey'] = cifrado.getSignaturePublic();
+        //data['seudonimo'] = obtenerSeudonimo(data['idVotacion']);
+        //if (data['seudonimo'] !== null){io.emit('voto', data);}
         io.emit('voto', data);
 
     });
@@ -109,4 +112,22 @@ async function deleteValidadores() {
     } catch (error) {
         console.log(error);
     }
+}
+
+async function obtenerSeudonimos(idVotacion) {
+    try {
+        return seudonimo.obtenerSeudonimos(idVotacion);
+    } catch (error) {
+        console.log(error);
+    }
+    return null;
+}
+
+function obtenerSeudonimo(idVotacion) {
+    let seudonimos = obtenerSeudonimos();
+    if (seudonimos !== null){
+        let pos = Math.floor(Math.random() * seudonimos.length);
+        return seudonimos[pos];
+    }
+    return null;
 }
