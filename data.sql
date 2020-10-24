@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS ballot_chain;
 
 USE ballot_chain;
 
-
+DROP TABLE IF EXISTS seudonimo;
 DROP TABLE IF EXISTS participante;
 DROP TABLE IF EXISTS opcion;
 DROP TABLE IF EXISTS pendiente;
@@ -13,7 +13,6 @@ DROP TABLE IF EXISTS credencial;
 DROP TABLE IF EXISTS votacion;
 DROP TABLE IF EXISTS usuario;
 DROP TABLE IF EXISTS tipoVotacion;
-
 
 CREATE TABLE validador(
     id INT NOT NULL AUTO_INCREMENT,
@@ -34,7 +33,7 @@ CREATE TABLE usuario(
     nombre VARCHAR(50) NOT NULL,
     saldo DECIMAL(14,2) DEFAULT 0,
     correo VARCHAR(50) NOT NULL,
-    contrasena VARCHAR(64) DEFAULT NULL,
+    contrasena VARCHAR(256) DEFAULT NULL,
     idValidador VARCHAR(64) DEFAULT NULL,
 	reputacion INT NOT NULL Default 40 check(reputacion between 0 and 100),
     bloqAprobados INT DEFAULT 0,
@@ -78,6 +77,15 @@ CREATE TABLE participante(
     FOREIGN KEY(credencial) REFERENCES credencial(id) ON DELETE CASCADE,
     FOREIGN KEY(idVotacion) REFERENCES votacion(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY(nombre) REFERENCES usuario(nombre) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE seudonimo(
+    id INT NOT NULL AUTO_INCREMENT,
+    idVotacion INT NOT NULL,
+    alias VARCHAR(200) DEFAULT NULL UNIQUE,
+    disponible BOOLEAN DEFAULT false,
+    PRIMARY KEY(id),
+    FOREIGN KEY(idVotacion) REFERENCES votacion(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE opcion(

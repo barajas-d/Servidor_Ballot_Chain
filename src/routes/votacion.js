@@ -6,6 +6,7 @@ const cryptoUpdateMd5 = "ballot_chain";
 const mysqlConnection = require('../dataBase');
 const corsOptionsDelegate = require('../cors');
 const jwt = require('jsonwebtoken');
+const cifrado = require('../cifrado');
 
 const secretKey = '123456789'
 let aux ;
@@ -94,6 +95,7 @@ router.post('/votacionAdd', verificarToken, cors(corsOptionsDelegate), (req, res
     const query = "INSERT INTO votacion (titulo, autor, fechaInicio, fechaLimite, tipoDeVotacion, descripcion, votos) values (?, ?, ?, ?, ?, ?, ?);";
     const queryParticipante = "INSERT INTO participante (idVotacion, nombre) VALUES (?, ?);";
     const queryOpcion = "INSERT INTO opcion (descripcion, nombre, votacion) VALUES (?, ?, ?);";
+    const querySeudonimo = "INSERT INTO seudonimo (idVotacion, alias) VALUES (?, ?)";
     const deleteVotacion = "DELETE FROM votacion WHERE votacion.id = ?;";
     let error = false;
     
@@ -101,7 +103,7 @@ router.post('/votacionAdd', verificarToken, cors(corsOptionsDelegate), (req, res
         if(!err) {
 
             let idVotacion = rows["insertId"];
-
+            let i = 0;
             participantes.forEach(element => {
                 console.log("Participante: " + element);
                 mysqlConnection.query(queryParticipante, [rows["insertId"], element], (errParticipante, rowsParticipante, fieldsParticipante) => {
@@ -109,6 +111,13 @@ router.post('/votacionAdd', verificarToken, cors(corsOptionsDelegate), (req, res
                         this.error = true;
                     }
                 });
+                alias = cifrado.encrypt(new Date().getTime().toString()+""+i);
+                mysqlConnection.query(querySeudonimo, [idVotacion, alias], (errParticipante, rowsParticipante, fieldsParticipante) => {
+                    if(errParticipante){
+                        this.error = true;
+                    }
+                });
+                i++;
             });
 
             opciones.forEach(element => {

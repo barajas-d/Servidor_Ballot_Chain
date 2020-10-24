@@ -1,7 +1,7 @@
 const router = require("../routes/validador");
 const mysqlConnection = require("../dataBase");
 const { json } = require("express");
-const cantGanadores = 5;
+const cantGanadores = 2;
 const stepTiempo = 15000;
 var validadoresActivos = [];
 var validadoresInactivos = [];
@@ -12,6 +12,9 @@ var IO = null;
 var tiempoValidadores = 0;
 var inicio = 0;
 var final = 0;
+var reportados = null;
+var castigo = 10;
+var recompensa = 10;
 
 function revisarConfirmaciones() {
   const hash = confirmarHash();
@@ -90,6 +93,7 @@ function solicitarValidadores() {
         console.log(participantes);
         validadoresActivos = [];
         validadoresActivos = torneo(participantes);
+        iniciarReportes();
 
         validadoresInactivos = [];
         for (const validador of validadores) {
@@ -161,6 +165,7 @@ function setValidadorStatus(validActivCopy, validadores, status) {
     if (status) {
       notificarValidadores(validadores);
     } else {
+      recompensarValidadores();
       iniciarTorneo();
     }
     return;
@@ -226,7 +231,68 @@ function transformarValidadoresConf(confirmados, validadores){
   return respuesta;
 }
 
+function reportarValidador(validadorReportado) {
+  if (reportados.has(validadorReportado)){
+    reportados.set(validadorReportado, reportados.get(validadorReportado) + 1);
+  }else{
+    reportados.set(validadorReportado, 1);
+  }
+  if (reportados.get(validadorReportado) > validadoresActivos.length * 0.6){
+    castigarValidador(validadorReportado);
+  }
+}
+
+function castigarValidador(validadorReportado) {
+  reportado = validadoresActivos.filter(v => v.nombre === validadorReportado)[0];
+  mysqlConnection.query(
+    "update usuario set reputacion = ? where nombre = ?",
+    [reportado.reputacion - castigo, validadorReportado],
+    (err, rows) => {
+      if (!err) {
+        console.log('Reputacion del validador '+validadorReportado+' disminuída');
+      } else {
+        console.log("error en dataBase");
+      }
+    }
+  );
+}
+
+function iniciarReportes() {
+  console.log('Activos al iniciar reportados', validadoresActivos);
+  reportados = new Map();
+  for (const validador of validadoresActivos) {
+    reportados.set(validador.nombre, 0);
+  }
+}
+
+function recompensarValidadores() {
+  console.log('Reportados al recompensar', reportados);
+  for (const validador of reportados.keys()){
+    if (reportados.get(validador) === 0){
+      recompensarValidador(validador);
+    }
+  }
+}
+
+function recompensarValidador(nombreValidador) {
+  validador = validadoresActivos.filter(v => v.nombre === nombreValidador)[0];
+  if (validador.reputacion < 100){
+    mysqlConnection.query(
+      "update usuario set reputacion = ? where nombre = ?",
+      [validador.reputacion + recompensa, nombreValidador],
+      (err, rows) => {
+        if (!err) {
+          console.log('Reputacion del validador '+nombreValidador+' aumentada');
+        } else {
+          console.log("error en dataBase");
+        }
+      }
+    );
+  }
+}
+
 exports.notificarValidadorActivo = notificarValidadorActivo;
 exports.iniciarTorneo = iniciarTorneo;
 exports.validadoresActivos = getValidadoresActivos;
 exports.validadoresActivos = getValidadores;
+exports.reportarValidador = reportarValidador;
