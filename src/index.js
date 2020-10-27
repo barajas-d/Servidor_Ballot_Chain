@@ -34,8 +34,8 @@ io.on('connection', (socket) => {
         
         data['firma'] = cifrado.sign(data['voto'])
         data['firmaKey'] = cifrado.getSignaturePublic();
-        enviarVoto(data);
-        //io.emit('voto', data);
+        //enviarVoto(data);
+        io.emit('voto', data);
 
     });
 
