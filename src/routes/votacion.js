@@ -99,7 +99,7 @@ router.post('/votacionAdd', verificarToken, cors(corsOptionsDelegate), (req, res
     const deleteVotacion = "DELETE FROM votacion WHERE votacion.id = ?;";
     let error = false;
     
-    mysqlConnection.query(query, [titulo, autor, transformarFecha(fechaInicio), transformarFecha(fechaLimite), tipoDeVotacion, descripcion, votos], (err, rows, fields) => {
+    mysqlConnection.query(query, [titulo, autor, fechaInicio, fechaLimite, tipoDeVotacion, descripcion, votos], (err, rows, fields) => {
         if(!err) {
 
             let idVotacion = rows["insertId"];

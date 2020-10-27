@@ -1,18 +1,35 @@
 const mysqlConnection = require("../dataBase");
 
 function obtenerSeudonimos(idVotacion){
-    const query = 'SELECT * FROM seudonimo WHERE idVotacion = ?';
-    const promesa = new Promise();
-    mysqlConnection.query(query, [idVotacion], (err, rows) => {
-        if(!err){
-            promesa.resolve(rows);
-        }
-        else{
-            console.log(err);
-            promesa.reject();
-        }
+    const query = 'SELECT * FROM seudonimo WHERE idVotacion = ? AND disponible = ?';
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query(query, [idVotacion, true], (err, rows) => {
+            if(!err){
+                resolve(rows);
+            }
+            else{
+                console.log(err);
+                reject(null);
+            }
+        });
     });
-    return promesa;
+}
+
+function inhabilitarSeudonimo(id){
+    const query = 'UPDATE seudonimo SET disponible = ? WHERE id = ?';
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query(query, [false, id], (err, rows) => {
+            if(!err){
+                console.log('Deshabilitando el seudonimo con id', id);
+                resolve(rows[0]);
+            }
+            else{
+                console.log(err);
+                reject(null);
+            }
+        });
+    });
 }
 
 exports.obtenerSeudonimos = obtenerSeudonimos;
+exports.inhabilitarSeudonimo = inhabilitarSeudonimo;
