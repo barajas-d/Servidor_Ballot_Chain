@@ -34,9 +34,8 @@ io.on('connection', (socket) => {
         
         data['firma'] = cifrado.sign(data['voto'])
         data['firmaKey'] = cifrado.getSignaturePublic();
-        //data['seudonimo'] = obtenerSeudonimo(data['idVotacion']);
-        //if (data['seudonimo'] !== null){io.emit('voto', data);}
-        io.emit('voto', data);
+        enviarVoto(data);
+        //io.emit('voto', data);
 
     });
 
@@ -114,20 +113,27 @@ async function deleteValidadores() {
     }
 }
 
-async function obtenerSeudonimos(idVotacion) {
-    try {
-        return seudonimo.obtenerSeudonimos(idVotacion);
-    } catch (error) {
-        console.log(error);
+async function obtenerSeudonimo(idVotacion) {
+    let seudonimos = await seudonimo.obtenerSeudonimos(idVotacion);
+    console.log('Seudonimos',seudonimos);
+    if (seudonimos !== null && seudonimos !== undefined && seudonimos.length > 0){
+        let pos = Math.floor(Math.random() * seudonimos.length);
+        let seudo = seudonimos[pos];
+        console.log('Seudonimo escogido', seudo);
+        await seudonimo.inhabilitarSeudonimo(seudo['id']);
+        return seudo['alias'];
     }
     return null;
 }
 
-function obtenerSeudonimo(idVotacion) {
-    let seudonimos = obtenerSeudonimos();
-    if (seudonimos !== null){
-        let pos = Math.floor(Math.random() * seudonimos.length);
-        return seudonimos[pos];
+async function enviarVoto(data) {
+    try {
+        data['seudonimo'] = await obtenerSeudonimo(data['idVotacion']);
+        console.log('---Seudonimo asignado---', data['seudonimo']);
+        if (data['seudonimo'] !== null){
+            io.emit('voto', data);
+        }
+    } catch (error) {
+        console.log(error);
     }
-    return null;
 }
