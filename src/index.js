@@ -34,8 +34,9 @@ io.on('connection', (socket) => {
         
         data['firma'] = cifrado.sign(data['voto'])
         data['firmaKey'] = cifrado.getSignaturePublic();
-        //enviarVoto(data);
-        io.emit('voto', data);
+        console.log('Redirigiendo voto...');
+        enviarVoto(data);
+        //io.emit('voto', data);
 
     });
 
@@ -88,6 +89,7 @@ app.use(require('./routes/tipoVotacion'));
 app.use(require('./routes/validador'));
 app.use(require('./routes/votar'));
 app.use(require('./routes/resultados'));
+app.use(require('./routes/alias'));
 //Iniciar
 app.listen(3000, () =>{
     console.log('Server on port', app.get('port'))
@@ -113,14 +115,18 @@ async function deleteValidadores() {
     }
 }
 
-async function obtenerSeudonimo(idVotacion) {
+async function obtenerSeudonimo(data) {
+    let idVotacion = data['idVotacion'];
+    let nombre = data['usuario'];
+    let votosDisponibles = await seudonimo.obtenerVotos(nombre, idVotacion);
     let seudonimos = await seudonimo.obtenerSeudonimos(idVotacion);
     console.log('Seudonimos',seudonimos);
-    if (seudonimos !== null && seudonimos !== undefined && seudonimos.length > 0){
+    if (seudonimos !== null && seudonimos !== undefined && seudonimos.length > 0 && votosDisponibles > 0){
         let pos = Math.floor(Math.random() * seudonimos.length);
         let seudo = seudonimos[pos];
         console.log('Seudonimo escogido', seudo);
         await seudonimo.inhabilitarSeudonimo(seudo['id']);
+        await seudonimo.restarVotoParticipante(nombre, idVotacion);
         return seudo['alias'];
     }
     return null;
@@ -128,9 +134,10 @@ async function obtenerSeudonimo(idVotacion) {
 
 async function enviarVoto(data) {
     try {
-        data['seudonimo'] = await obtenerSeudonimo(data['idVotacion']);
-        console.log('---Seudonimo asignado---', data['seudonimo']);
-        if (data['seudonimo'] !== null){
+        data['alias'] = await obtenerSeudonimo(data);
+        console.log('---Seudonimo asignado al usuairo---', data['usuario']);
+        console.log('---Seudonimo asignado---', data['alias']);
+        if (data['alias'] !== null){
             io.emit('voto', data);
         }
     } catch (error) {
