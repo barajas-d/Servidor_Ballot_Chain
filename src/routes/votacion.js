@@ -85,12 +85,6 @@ function buscarParticipanteUsuario(nombreUsuario, id){
 router.post('/votacionAdd', verificarToken, cors(corsOptionsDelegate), (req, res) => {
 
     console.log('entro');
-    function transformarFecha(fecha){
-        let fechaSalida = "";
-        fechaSalida = fecha['year'] + '-' + fecha['month'] + '-' + fecha['day'];
-        return fechaSalida;
-    }
-
     const { titulo, autor, fechaInicio, fechaLimite, tipoDeVotacion, descripcion, votos, opciones, participantes} = req.body;
     const query = "INSERT INTO votacion (titulo, autor, fechaInicio, fechaLimite, tipoDeVotacion, descripcion, votos) values (?, ?, ?, ?, ?, ?, ?);";
     const queryParticipante = "INSERT INTO participante (idVotacion, nombre) VALUES (?, ?);";
