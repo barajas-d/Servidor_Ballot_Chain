@@ -84,6 +84,7 @@ CREATE TABLE seudonimo(
     id INT NOT NULL AUTO_INCREMENT,
     idVotacion INT NOT NULL,
     alias VARCHAR(256) DEFAULT NULL UNIQUE,
+    disponible BOOLEAN DEFAULT true,
     PRIMARY KEY(id),
     FOREIGN KEY(idVotacion) REFERENCES votacion(id) ON DELETE CASCADE ON UPDATE CASCADE
 );

@@ -83,7 +83,7 @@ function obtenerVotosDisponibles(nombre, idVotacion){
     );
 }
 
-function obtenerSeudonimo(idVotacion, alias){
+/* function obtenerSeudonimo(idVotacion, alias){
     const query = 'SELECT * FROM seudonimo WHERE idVotacion = ? AND alias = ?';
     return new Promise((resolve, reject) => {
         mysqlConnection.query(query, [idVotacion, alias], (err, rows) => {
@@ -123,10 +123,10 @@ async function calcularSeudonimo(idVotacion, idVoto) {
         await insertarSeudonimo(idVotacion, alias);
     }
     return alias;
-}
+} */
 
 exports.obtenerSeudonimos = obtenerSeudonimos;
 exports.inhabilitarSeudonimo = inhabilitarSeudonimo;
 exports.restarVotoParticipante = restarVotoParticipante;
 exports.obtenerVotos = obtenerVotos;
-exports.calcularSeudonimo = calcularSeudonimo;
+//exports.calcularSeudonimo = calcularSeudonimo;

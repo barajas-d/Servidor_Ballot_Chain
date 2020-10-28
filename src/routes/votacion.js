@@ -96,8 +96,8 @@ router.post('/votacionAdd', verificarToken, cors(corsOptionsDelegate), (req, res
     mysqlConnection.query(query, [titulo, autor, fechaInicio, fechaLimite, tipoDeVotacion, descripcion, votos], (err, rows, fields) => {
         if(!err) {
 
-/*             let idVotacion = rows["insertId"];
-            let i = 0; */
+            let idVotacion = rows["insertId"];
+            let i = 0;
             participantes.forEach(element => {
                 console.log("Participante: " + element);
                 mysqlConnection.query(queryParticipante, [rows["insertId"], element], (errParticipante, rowsParticipante, fieldsParticipante) => {
@@ -105,13 +105,13 @@ router.post('/votacionAdd', verificarToken, cors(corsOptionsDelegate), (req, res
                         this.error = true;
                     }
                 });
-/*                 alias = cifrado.encrypt(new Date().getTime().toString()+""+i);
+                alias = cifrado.encrypt(new Date().getTime().toString()+""+i);
                 mysqlConnection.query(querySeudonimo, [idVotacion, alias], (errParticipante, rowsParticipante, fieldsParticipante) => {
                     if(errParticipante){
                         this.error = true;
                     }
                 });
-                i++; */
+                i++;
             });
 
             opciones.forEach(element => {
