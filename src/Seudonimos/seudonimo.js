@@ -1,4 +1,6 @@
 const mysqlConnection = require("../dataBase");
+const cifrado = require('../cifrado');
+const sha512 = require('js-sha512');
 
 function obtenerSeudonimos(idVotacion){
     const query = 'SELECT * FROM seudonimo WHERE idVotacion = ? AND disponible = ?';
@@ -67,8 +69,6 @@ async function obtenerVotos(nombre, idVotacion){
 
 function obtenerVotosDisponibles(nombre, idVotacion){
     const query = 'SELECT * FROM participante WHERE nombre = ? AND idVotacion = ?';
-    console.log('Nombre', nombre);
-    console.log('IdVotacion', idVotacion);
     return new Promise((resolve, reject) => {
         mysqlConnection.query(query, [nombre, idVotacion], (err, rows) => {
             if(!err){
@@ -83,7 +83,50 @@ function obtenerVotosDisponibles(nombre, idVotacion){
     );
 }
 
+function obtenerSeudonimo(idVotacion, alias){
+    const query = 'SELECT * FROM seudonimo WHERE idVotacion = ? AND alias = ?';
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query(query, [idVotacion, alias], (err, rows) => {
+            if(!err){
+                resolve(rows);
+            }
+            else{
+                console.log(err);
+                reject(null);
+            }
+        });
+    });
+}
+
+function insertarSeudonimo(idVotacion, alias){
+    const query = 'INSERT INTO seudonimo (idVotacion, alias) VALUES (?, ?)';
+    return new Promise((resolve, reject) => {
+        mysqlConnection.query(query, [idVotacion, alias], (err, rows) => {
+            if(!err){
+                resolve(rows);
+            }
+            else{
+                console.log(err);
+                reject(null);
+            }
+        });
+    });
+}
+
+async function calcularSeudonimo(idVotacion, idVoto) {
+    console.log('idVotacion-------', idVotacion);
+    console.log('idVoto--------', idVoto);
+    const alias = sha512.create().update(idVotacion + idVoto).hex();
+    console.log('Tamaño--', alias.length);
+    const resultados = await obtenerSeudonimo(idVotacion, alias);
+    if (resultados.length === 0){
+        await insertarSeudonimo(idVotacion, alias);
+    }
+    return alias;
+}
+
 exports.obtenerSeudonimos = obtenerSeudonimos;
 exports.inhabilitarSeudonimo = inhabilitarSeudonimo;
 exports.restarVotoParticipante = restarVotoParticipante;
 exports.obtenerVotos = obtenerVotos;
+exports.calcularSeudonimo = calcularSeudonimo;

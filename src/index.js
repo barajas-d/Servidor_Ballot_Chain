@@ -13,7 +13,7 @@ const seudonimo = require('./Seudonimos/seudonimo');
 //var validadoresActivos = require('./Torneo/logicaTorneo');
 //Variables de torneo
 var tiempoSigTorneo=10000;
-const votosRegistrados = new Map() //key: hash voto, value: seudonimo;
+
 //Listener por socket.io ------------------
 io.on('connection', (socket) => {
     console.log('Nueva coneccion');
@@ -35,20 +35,10 @@ io.on('connection', (socket) => {
         data['firma'] = cifrado.sign(data['voto'])
         data['firmaKey'] = cifrado.getSignaturePublic();
         console.log('Redirigiendo voto...');
-        let idVoto = data['voto'];
-        console.log('---Votos Registrados---', votosRegistrados);
-        if (votosRegistrados.get(idVoto) !== undefined){
-            while(votosRegistrados.get(idVoto) === 'xd') {
-
-            }
-            data['alias'] = votosRegistrados.get(idVoto);
-            io.emit('voto', data);
-        }else{
-            votosRegistrados.set(idVoto, 'xd');
-            enviarVoto(data, idVoto);
-        }
+        // idVotacion + voto
+        //enviarVoto(data, idVoto);
         //io.emit('voto', data);
-
+        emitirVoto(data);
     });
 
     // MIRAR SI SIRVE PA' ALGO--------------------------------
@@ -126,7 +116,35 @@ async function deleteValidadores() {
     }
 }
 
-async function obtenerSeudonimo(data) {
+async function emitirVoto(data){
+    try {
+        if (await comprobarVotosDisponibles(data['usuario'], data['idVotacion'])){
+            data['alias'] = await asignarSeudonimo(data);
+            io.emit('voto', data);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function comprobarVotosDisponibles(nombre, idVotacion){
+    let votosDisponibles = await seudonimo.obtenerVotos(nombre, idVotacion);
+    if (votosDisponibles > 0){
+        return true;
+    }
+    return false;
+}
+
+async function asignarSeudonimo(data) {
+    let idVoto = data['idVoto'];
+    let idVotacion = data['idVotacion'];
+    return await seudonimo.calcularSeudonimo(idVotacion, idVoto);
+}
+
+
+// --------------------------------------
+
+/* async function obtenerSeudonimo(data) {
     let idVotacion = data['idVotacion'];
     let nombre = data['usuario'];
     let votosDisponibles = await seudonimo.obtenerVotos(nombre, idVotacion);
@@ -143,16 +161,15 @@ async function obtenerSeudonimo(data) {
     return null;
 }
 
-async function enviarVoto(data, idVoto) {
+async function enviarVoto(data) {
     try {
         data['alias'] = await obtenerSeudonimo(data);
         console.log('---Seudonimo asignado al usuairo---', data['usuario']);
         console.log('---Seudonimo asignado---', data['alias']);
         if (data['alias'] !== null){
-            votosRegistrados.set(idVoto, data['alias']);
             io.emit('voto', data);
         }
     } catch (error) {
         console.log(error);
     }
-}
+} */
