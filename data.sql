@@ -73,6 +73,7 @@ CREATE TABLE participante(
     credencial INT DEFAULT NULL,
     idVotacion INT NOT NULL,
     nombre VARCHAR(50) NOT NULL,
+    votosDisponibles INT DEFAULT 1, 
     PRIMARY KEY(id),
     FOREIGN KEY(credencial) REFERENCES credencial(id) ON DELETE CASCADE,
     FOREIGN KEY(idVotacion) REFERENCES votacion(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -82,7 +83,7 @@ CREATE TABLE participante(
 CREATE TABLE seudonimo(
     id INT NOT NULL AUTO_INCREMENT,
     idVotacion INT NOT NULL,
-    alias VARCHAR(200) DEFAULT NULL UNIQUE,
+    alias VARCHAR(256) DEFAULT NULL UNIQUE,
     disponible BOOLEAN DEFAULT true,
     PRIMARY KEY(id),
     FOREIGN KEY(idVotacion) REFERENCES votacion(id) ON DELETE CASCADE ON UPDATE CASCADE

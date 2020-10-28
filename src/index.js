@@ -13,6 +13,7 @@ const seudonimo = require('./Seudonimos/seudonimo');
 //var validadoresActivos = require('./Torneo/logicaTorneo');
 //Variables de torneo
 var tiempoSigTorneo=10000;
+const votosRegistrados = new Map() //key: hash voto, value: seudonimo;
 
 //Listener por socket.io ------------------
 io.on('connection', (socket) => {
@@ -34,9 +35,14 @@ io.on('connection', (socket) => {
         
         data['firma'] = cifrado.sign(data['voto'])
         data['firmaKey'] = cifrado.getSignaturePublic();
-        //enviarVoto(data);
-        io.emit('voto', data);
-
+        let idVoto = data['idVoto'];
+        if (votosRegistrados.has(idVoto)){
+            data['alias'] = votosRegistrados.get(idVoto);
+            io.emit('voto', data);
+        }else{
+            enviarVoto(data, idVoto);
+        }
+        //emitirVoto(data);
     });
 
     // MIRAR SI SIRVE PA' ALGO--------------------------------
@@ -88,6 +94,7 @@ app.use(require('./routes/tipoVotacion'));
 app.use(require('./routes/validador'));
 app.use(require('./routes/votar'));
 app.use(require('./routes/resultados'));
+app.use(require('./routes/alias'));
 //Iniciar
 app.listen(3000, () =>{
     console.log('Server on port', app.get('port'))
@@ -113,14 +120,44 @@ async function deleteValidadores() {
     }
 }
 
-async function obtenerSeudonimo(idVotacion) {
+/* async function emitirVoto(data){
+    try {
+        if (await comprobarVotosDisponibles(data['usuario'], data['idVotacion'])){
+            data['alias'] = await asignarSeudonimo(data);
+            io.emit('voto', data);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function comprobarVotosDisponibles(nombre, idVotacion){
+    let votosDisponibles = await seudonimo.obtenerVotos(nombre, idVotacion);
+    if (votosDisponibles > 0){
+        return true;
+    }
+    return false;
+}
+
+async function asignarSeudonimo(data) {
+    let idVoto = data['idVoto'];
+    let idVotacion = data['idVotacion'];
+    return await seudonimo.calcularSeudonimo(idVotacion, idVoto);
+} */
+
+
+// --------------------------------------
+
+async function obtenerSeudonimo(data) {
+    let idVotacion = data['idVotacion'];
+    let nombre = data['usuario'];
+    let votosDisponibles = await seudonimo.obtenerVotos(nombre, idVotacion);
     let seudonimos = await seudonimo.obtenerSeudonimos(idVotacion);
-    console.log('Seudonimos',seudonimos);
-    if (seudonimos !== null && seudonimos !== undefined && seudonimos.length > 0){
+    if (seudonimos !== null && seudonimos !== undefined && seudonimos.length > 0 && votosDisponibles > 0){
         let pos = Math.floor(Math.random() * seudonimos.length);
         let seudo = seudonimos[pos];
-        console.log('Seudonimo escogido', seudo);
         await seudonimo.inhabilitarSeudonimo(seudo['id']);
+        await seudonimo.restarVotoParticipante(nombre, idVotacion);
         return seudo['alias'];
     }
     return null;
@@ -128,9 +165,9 @@ async function obtenerSeudonimo(idVotacion) {
 
 async function enviarVoto(data) {
     try {
-        data['seudonimo'] = await obtenerSeudonimo(data['idVotacion']);
-        console.log('---Seudonimo asignado---', data['seudonimo']);
-        if (data['seudonimo'] !== null){
+        data['alias'] = await obtenerSeudonimo(data);
+        if (data['alias'] !== null){
+            votosRegistrados.set(data['idVoto'], data['alias']);
             io.emit('voto', data);
         }
     } catch (error) {
