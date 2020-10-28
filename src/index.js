@@ -13,7 +13,7 @@ const seudonimo = require('./Seudonimos/seudonimo');
 //var validadoresActivos = require('./Torneo/logicaTorneo');
 //Variables de torneo
 var tiempoSigTorneo=10000;
-
+const votosRegistrados = new Map() //key: hash voto, value: seudonimo;
 //Listener por socket.io ------------------
 io.on('connection', (socket) => {
     console.log('Nueva coneccion');
@@ -35,7 +35,18 @@ io.on('connection', (socket) => {
         data['firma'] = cifrado.sign(data['voto'])
         data['firmaKey'] = cifrado.getSignaturePublic();
         console.log('Redirigiendo voto...');
-        enviarVoto(data);
+        let idVoto = data['voto'];
+        console.log('---Votos Registrados---', votosRegistrados);
+        if (votosRegistrados.get(idVoto) !== undefined){
+            while(votosRegistrados.get(idVoto) === 'xd') {
+
+            }
+            data['alias'] = votosRegistrados.get(idVoto);
+            io.emit('voto', data);
+        }else{
+            votosRegistrados.set(idVoto, 'xd');
+            enviarVoto(data, idVoto);
+        }
         //io.emit('voto', data);
 
     });
@@ -132,12 +143,13 @@ async function obtenerSeudonimo(data) {
     return null;
 }
 
-async function enviarVoto(data) {
+async function enviarVoto(data, idVoto) {
     try {
         data['alias'] = await obtenerSeudonimo(data);
         console.log('---Seudonimo asignado al usuairo---', data['usuario']);
         console.log('---Seudonimo asignado---', data['alias']);
         if (data['alias'] !== null){
+            votosRegistrados.set(idVoto, data['alias']);
             io.emit('voto', data);
         }
     } catch (error) {
