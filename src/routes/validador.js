@@ -70,6 +70,24 @@ router.get('/desactivarValidador/:peerId', cors(corsOptionsDelegate), (req, res)
     }
 });
 
+router.get('/eliminarValidador/:peerId', cors(corsOptionsDelegate), (req, res) => {
+    const { peerId } = req.params;
+    const query = "DELETE FROM validador WHERE peerId = ?";
+    mysqlConnection.query(query, [peerId]), (err, rows) => {
+        if(!err){
+            if(rows.affectedRows == 0){
+                res.json({Status: 'No se logro eliminar el validador'});
+            }
+            else{
+                res.json({Status: 'validador eliminado'});
+            }
+        }
+        else{
+            res.json({Status: 'No se encontro el peerId'});
+        }
+    }
+});
+
 router.post('/confirmarBlockChainActualizada', verificarToken, (req, res) => {
     const nombre = req.userId;
     const { hashBlockchain } = req.body;
