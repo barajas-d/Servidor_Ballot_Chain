@@ -115,25 +115,30 @@ router.get('/publico', cors(corsOptionsDelegate), (req, res) => {
     })
 });
 
+router.get('/validar-token', verificarToken, cors(corsOptionsDelegate), (req, res) => {
+    res.status(200).send('Solicitud autorizada');
+});
+
 function verificarToken(req, res, next)
 {
-    //console.log(req.headers.authorization);
+    try {
     if(!req.headers.authorization)
     {
         return res.status(401).send('Solicitud no autorizada');
     }
+
     const token = req.headers.authorization.split(' ')[1];
     if(token == null)
     {
-        return res.status(401).send('Solicitud no autorizada 2');
+        return res.status(401).send('Solicitud no autorizada');
     }
-    //console.log('token: '+ token)
 
     const datos= jwt.verify(token, secretKey)
-    //console.log(datos);
     req.userId= datos._id;
     next();
-
+    } catch (error) {
+        res.status(401).send('Solicitud no autorizada')
+    }
 }
 
 module.exports = router;

@@ -66,11 +66,15 @@ router.get('/votar/:id', verificarToken, cors(corsOptionsDelegate), async (req, 
 
 function buscarParticipanteUsuario(nombreUsuario, id){
     return new Promise ((resolve, reject) => {
-        mysqlConnection.query('select nombre, idVotacion from participante where nombre =? and idVotacion = ?', [nombreUsuario, id],  (err, rows, fields) => {
+        mysqlConnection.query('select nombre, idVotacion, votosDisponibles from participante where nombre =? and idVotacion = ?', [nombreUsuario, id],  (err, rows, fields) => {
             if(!err){
                 if(rows.length > 0){
-                    resolve(rows)
-    
+                    if(rows[0].votosDisponibles == 1){
+                        resolve(rows);
+                    }else
+                    {
+                        reject('notAuthorized');
+                    }
                 }
                 else{
                     reject('notAuthorized');
