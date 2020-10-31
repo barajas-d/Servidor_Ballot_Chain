@@ -70,4 +70,32 @@ router.get('/participanteDelete/:id/:nombre', verificarToken, cors(corsOptionsDe
     })
 });
 
+router.get('/participanteVotos/:idVotacion/:nombre', verificarToken, cors(corsOptionsDelegate), (req, res) => {
+    const { idVotacion, nombre } = req.params;
+    const query = "SELECT votosDisponibles FROM participante WHERE idVotacion = ? AND nombre = ?";
+    mysqlConnection.query(query, [idVotacion, nombre], (err, rows) => {
+        if(!err){
+            if (rows.length > 0){
+                res.json(rows[0]);
+            }else{
+                res.json({votosDisponibles: -1});
+            }
+        } else {
+            console.log(err);
+        }
+    })
+});
+
+router.get('/votosEmitidosVotacion/:idVotacion', verificarToken, cors(corsOptionsDelegate), (req, res) => {
+    const { idVotacion } = req.params;
+    const query = "SELECT * FROM participante WHERE idVotacion = ? AND votosDisponibles = ?";
+    mysqlConnection.query(query, [idVotacion, 0], (err, rows) => {
+        if(!err){
+            res.json(rows.length);
+        } else {
+            console.log(err);
+        }
+    })
+});
+
 module.exports = router;
