@@ -10,8 +10,8 @@ const logicaTorneo = require('../Torneo/logicaTorneo');
 
 router.post('/usuarioValidador', (req, res) => {
     const { peerId, nombre } = req.body;
-    const query = "UPDATE validador SET nombreValidador=? WHERE peerId=?";
-    mysqlConnection.query(query, [nombre, peerId], (err, rows) => {
+    const query = "INSERT INTO validador (peerId, nombreValidador) VALUES (?, ?)";
+    mysqlConnection.query(query, [peerId, nombre], (err, rows) => {
         if(!err){
             res.json(rows);
         }
