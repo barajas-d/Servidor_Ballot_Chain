@@ -1,5 +1,5 @@
 node_modules
-pruebas
-ssl.crt
-ssl.csr
-ssl.key
+pruebas.sql
+ssl.crt/*
+ssl.csr/*
+ssl.key/*
