@@ -101,7 +101,7 @@ app.listen(3000, () =>{
 });
 
 peerServer.on('connection', (client) => {
-    console.log('Validador conectado', client);
+    console.log('Validador conectado');
     // validadores.registrarValidador(client.getId());
 });
 
