@@ -1,11 +1,34 @@
 const express = require('express');
+const fs = require('fs');
 const { ExpressPeerServer } = require('peer');
 const app = express();
-const httpserver = require('http').createServer(app);
+const appSocket = express();
+const appPeer = express();
+const httpsServer = require('https');
+const serverSocket = require('https');
 const cors = require('cors');
+const socketPort = process.env.PORTSOCKET || 4000;
+appSocket.use(cors());
+serverSocket.createServer({
+    key: fs.readFileSync('ssl.key/private.key'),
+    cert: fs.readFileSync('ssl.crt/certificate.crt')},
+    appSocket).listen(socketPort);
+//const httpserver = require('http').createServer(app);
+
 const validadores = require('./validadores');
-const server = require('http').createServer(app);
-const io = require('socket.io')(server);
+//const server = require('http').createServer(app);
+const io = require('socket.io')(serverSocket, {
+    handlePreflightRequest: (req, res) => {
+        const headers = {
+            "Access-Control-Allow-Headers": '*',
+            "Access-Control-Allow-Origin": 'https://pocketballotchain.webhop.me:*', //or the specific origin you want to give access to,
+            "Access-Control-Allow-Credentials": true,
+            "Access-Control-Allow-Methods": "OPTIONS, GET"
+        };
+        res.writeHead(200, headers);
+        res.end();
+    }
+});
 const cifrado = require('./cifrado');
 const torneo = require('./Torneo/logicaTorneo');
 const seudonimo = require('./Seudonimos/seudonimo');
@@ -16,6 +39,15 @@ var tiempoSigTorneo=10000;
 const votosRegistrados = new Map() //key: hash voto, value: seudonimo;
 
 //Listener por socket.io ------------------
+
+io.origins((origin, callback) => {
+    //if (origin !== 'https://foo.example.com') {
+    //    return callback('origin not allowed', false);
+    //}
+    callback(null, true);
+  });
+
+
 io.on('connection', (socket) => {
     console.log('Nueva coneccion');
     socket.emit('voto', 'ListenerEstablecido');
@@ -57,31 +89,31 @@ io.on('disconnect', () => {
     console.log('Algo se desconecto');
 });
 
-const listenerPort = process.env.PORTLISTENER || 4000;
-server.listen(listenerPort, function(){
-    console.log("Socket listening on port : " + listenerPort);
-});
+//INICIO SOCKET HTTPS
+
 //Fin Listener por socket.io
 
 
-const peerServer = ExpressPeerServer(httpserver, {
+const peerServer = ExpressPeerServer(httpsServer, {
     debug: true,
     path: '/'
 });
  
 const peer_port = process.env.PORTPEER || 5000;
-
-httpserver.listen(peer_port, function () {
-    console.log("listening peer connections on : " + peer_port);
+httpsServer.createServer({
+    key: fs.readFileSync('ssl.key/private.key'),
+    cert: fs.readFileSync('ssl.crt/certificate.crt')
+}, app).listen(peer_port, function(){
+console.log("Peer https server listening on port " + peer_port + "...");
 });
 
-//Configuracion acceso
-app.set('port', process.env.PORT || 3000);
+
 //Middlewares
-app.use(cors());
+
 app.use(express.json());
+app.use(cors());
 //PeerJs
-app.use('/peerjs', peerServer);
+//app.use('/peerjs', peerServer);
 //Rutas
 app.use(require('./routes/employees'));
 app.use(require('./routes/votacion'));
@@ -95,11 +127,14 @@ app.use(require('./routes/validador'));
 app.use(require('./routes/votar'));
 app.use(require('./routes/resultados'));
 app.use(require('./routes/alias'));
-//Iniciar
-app.listen(3000, () =>{
-    console.log('Server on port', app.get('port'))
-});
+//Configuracion acceso e inicio REST
+const rest_port = process.env.PORT || 3000;
+httpsServer.createServer({
+    key: fs.readFileSync('ssl.key/private.key'),
+    cert: fs.readFileSync('ssl.crt/certificate.crt')
+}, app).listen(rest_port);
 
+//--FIN Configurar acceso e inicio REST
 peerServer.on('connection', (client) => {
     console.log('Validador conectado');
     validadores.registrarValidador(client.getId());
