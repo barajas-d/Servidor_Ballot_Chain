@@ -1,3 +1,5 @@
 /node_modules/
-pruebas
-/ssl.*/
+/ssl.crt/
+/ssl.csr/
+/ssl.key/
+pruebas.sql

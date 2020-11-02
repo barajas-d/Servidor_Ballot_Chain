@@ -3,11 +3,12 @@ const fs = require('fs');
 const { ExpressPeerServer } = require('peer');
 const app = express();
 const httpsServer = require('https');
+const serverSocket = require('http').createServer(app);
 //const httpserver = require('http').createServer(app);
 const cors = require('cors');
 const validadores = require('./validadores');
-const server = require('http').createServer(app);
-const io = require('socket.io')(server);
+//const server = require('http').createServer(app);
+const io = require('socket.io')(serverSocket, { origins: 'https://pocketballotchain.webhop.me'});
 const cifrado = require('./cifrado');
 const torneo = require('./Torneo/logicaTorneo');
 const seudonimo = require('./Seudonimos/seudonimo');
@@ -61,12 +62,17 @@ io.on('disconnect', () => {
 
 //INICIO SOCKET HTTPS
 const socketPort = process.env.PORTSOCKET || 4000;
-httpsServer.createServer({
-    key: fs.readFileSync('ssl.key/private.key'),
-    cert: fs.readFileSync('ssl.crt/certificate.crt')
-}, app).listen(socketPort, function(){
-console.log("Socket https server listening on port " + socketPort + "...");
-});
+/*serverSocket.createServer(//{
+    //key: fs.readFileSync('ssl.key/private.key'),
+    //cert: fs.readFileSync('ssl.crt/certificate.crt')},
+    app).listen(socketPort, function(){
+        console.log("Socket https server listening on port " + socketPort + "...");
+    });*/
+
+serverSocket.listen(socketPort, function(){
+    console.log("Socket http server on port " + serverSocket);
+})
+
 //Fin Listener por socket.io
 
 
@@ -85,8 +91,9 @@ console.log("Peer https server listening on port " + peer_port + "...");
 
 
 //Middlewares
-app.use(cors());
+
 app.use(express.json());
+app.use(cors());
 //PeerJs
 //app.use('/peerjs', peerServer);
 //Rutas
