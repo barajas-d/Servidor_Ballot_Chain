@@ -1,7 +1,7 @@
 const router = require("../routes/validador");
 const mysqlConnection = require("../dataBase");
 const { json } = require("express");
-const cantGanadores = 5;
+const cantGanadores = 2;
 const stepTiempo = 15000;
 var validadoresActivos = [];
 var validadoresInactivos = [];
@@ -15,6 +15,8 @@ var final = 0;
 var reportados = null;
 var castigo = 10;
 var recompensa = 10;
+
+const validadoresDefault = ["rockbandicoot", "1bandicoot"]
 
 function revisarConfirmaciones() {
   const hash = confirmarHash();
@@ -49,7 +51,7 @@ function confirmarHash() {
   if (repeticiones >= Math.floor(validActiConfir.length * 0.6)) {
     return hashMayor;
   }
-  return null; //TO-DO: ¿Que se hace en ese caso?
+  return null; 
 }
 
 function iniciarTorneo(miIo) {
@@ -87,7 +89,19 @@ function solicitarValidadores() {
         console.log("Candidatos: ");
         console.log(participantes);
         validadoresActivos = [];
-        validadoresActivos = torneo(participantes);
+
+        for (let i = 0; i < validadoresDefault.length; i++) {
+          const element = validadoresDefault[i];
+          const aux = participantes.filter((validador) => validador.nombre === element);
+          if(aux.length > 0){
+            participantes = participantes.filter((validador) => validador.nombre !== element);
+            validadoresActivos.push(aux[0]);
+          } 
+        }
+
+        validadoresActivos = validadoresActivos.concat(torneo(participantes));
+        console.log('-----------------GANADORES--------------------');
+        console.log(validadoresActivos);
         iniciarReportes();
 
         validadoresInactivos = [];
