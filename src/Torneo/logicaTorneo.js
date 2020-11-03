@@ -71,11 +71,6 @@ function solicitarValidadores() {
       if (!err) {
         randomSort(validadores);
 
-        console.log('Confirmaciones activos', validActiConfir);
-        console.log('Confirmaciones activos', validadoresActivos);
-        console.log('Confirmaciones inactivos', validInactConfir);
-        console.log('Confirmaciones inactivos', validadoresInactivos);
-
         let participantes;
         validActiConfir = transformarValidadoresConf(validActiConfir, validadoresActivos);
         validInactConfir = transformarValidadoresConf(validInactConfir, validadoresInactivos);
@@ -258,7 +253,6 @@ function castigarValidador(validadorReportado) {
 }
 
 function iniciarReportes() {
-  console.log('Activos al iniciar reportados', validadoresActivos);
   reportados = new Map();
   for (const validador of validadoresActivos) {
     reportados.set(validador.nombre, 0);
@@ -266,7 +260,6 @@ function iniciarReportes() {
 }
 
 function recompensarValidadores() {
-  console.log('Reportados al recompensar', reportados);
   for (const validador of reportados.keys()){
     if (reportados.get(validador) === 0){
       recompensarValidador(validador);

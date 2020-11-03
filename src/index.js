@@ -137,7 +137,7 @@ io.on('connection', (socket) => {
 
 peerServer.on('connection', (client) => {
     console.log('Validador conectado');
-    validadores.registrarValidador(client.getId());
+    // validadores.registrarValidador(client.getId());
 });
 
 peerServer.on('disconnect', (client) => {

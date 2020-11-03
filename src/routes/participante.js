@@ -88,7 +88,7 @@ router.get('/participanteVotos/:idVotacion/:nombre', verificarToken, cors(corsOp
 
 router.get('/votosEmitidosVotacion/:idVotacion', verificarToken, cors(corsOptionsDelegate), (req, res) => {
     const { idVotacion } = req.params;
-    const query = "SELECT * FROM participante WHERE idVotacion = ? AND votosDisponibles = ?";
+    const query = "SELECT * FROM seudonimo WHERE idVotacion = ? AND disponible = ?";
     mysqlConnection.query(query, [idVotacion, 0], (err, rows) => {
         if(!err){
             res.json(rows.length);
