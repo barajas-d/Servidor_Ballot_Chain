@@ -206,4 +206,17 @@ function verificarToken(req, res, next) {
     next();
 }
 
+//Visualizar
+/* router.get('/votacionAutorVis/:nombre', verificarToken, cors(corsOptionsDelegate), (req, res) => {
+    const { nombre } = req.params;
+    mysqlConnection.query('SELECT * FROM votacion WHERE autor = ?', [nombre],  (err, rows, fields) => {
+        if(!err){
+            res.json(rows);
+        }
+        else{
+            console.log(err);
+        }
+    })
+}); */
+
 module.exports = router;
