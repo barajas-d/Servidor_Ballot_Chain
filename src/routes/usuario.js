@@ -88,12 +88,12 @@ router.put(
   cors(corsOptionsDelegate),
   (req, res) => {
     const nombreId = req.userId;
-    const { nombre, saldo, correo } = req.body;
+    const { nombre, saldo, correo, contrasena } = req.body;
     const query =
-      'UPDATE usuario SET nombre = ?, saldo = ?, correo = ? WHERE nombre = ?';
+      'UPDATE usuario SET nombre = ?, saldo = ?, correo = ?, contrasena = ? WHERE nombre = ?';
     mysqlConnection.query(
       query,
-      [nombre, saldo, correo, nombreId],
+      [nombre, saldo, correo, contrasena, nombreId],
       (err, rows, fields) => {
         if (!err) {
           if (rows.affectedRows == 0) {

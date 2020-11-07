@@ -98,4 +98,50 @@ router.get('/votosEmitidosVotacion/:idVotacion', verificarToken, cors(corsOption
     })
 });
 
+router.get('/participanteVotacionInfo/:idVotacion', verificarToken, cors(corsOptionsDelegate), (req, res) => {
+    const { idVotacion } = req.params;
+    const query = "SELECT * FROM participante WHERE idVotacion = ?";
+    mysqlConnection.query(query, [idVotacion, 0], (err, rows) => {
+        if(!err){
+            res.json(rows);
+        } else {
+            console.log(err);
+        }
+    })
+});
+
+//Visualizar------------
+router.get('/participanteUsuarioVis', verificarToken, cors(corsOptionsDelegate), (req, res) => {
+    const nombre = req.userId;
+    mysqlConnection.query(
+        'SELECT v.id, titulo, autor, fechaInicio, fechaLimite, plantillaAsociada, tipoDeVotacion, descripcion, votos '+
+        'FROM participante AS p INNER JOIN votacion as v ON p.idVotacion = v.id '+
+        'WHERE p.nombre = ? AND p.visible = ?',
+        [nombre, true],  (err, rows, fields) => {
+        if(!err){
+            res.json(rows);
+        }
+        else{
+            console.log(err);
+        }
+    })
+});
+
+router.put('/participanteDeleteVis', verificarToken, cors(corsOptionsDelegate), (req, res) => {
+    const { id, nombre } = req.body;
+    const query = "UPDATE participante SET visible = ? WHERE idVotacion = ? AND nombre = ?";
+    mysqlConnection.query(query, [false, id, nombre], (err, rows) => {
+        if(!err){
+            if(rows.affectedRows == 0){
+                res.json({Status: 'No existe la votacion ' + id + ' o el usuario ' + nombre});
+            }
+            else{
+                res.json({Status: 'Usuario ' + nombre + ' eliminado de la votacion ' + id});
+            }
+        } else {
+            console.log(err);
+        }
+    })
+});
+
 module.exports = router;

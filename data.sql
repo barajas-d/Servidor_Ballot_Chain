@@ -61,7 +61,7 @@ CREATE TABLE votacion(
 CREATE TABLE  credencial(
   id INT NOT NULL AUTO_INCREMENT,
   clave VARCHAR(200) DEFAULT NUll,
-  isValid boolean NOT NULL DEFAULT false,
+  isValid BOOLEAN NOT NULL DEFAULT false,
   votacion INT NOT NULL,
   PRIMARY KEY(id),
   FOREIGN KEY(votacion) REFERENCES votacion(id)
@@ -73,7 +73,8 @@ CREATE TABLE participante(
     credencial INT DEFAULT NULL,
     idVotacion INT NOT NULL,
     nombre VARCHAR(50) NOT NULL,
-    votosDisponibles INT DEFAULT 1, 
+    votosDisponibles INT DEFAULT 1,
+    visible BOOLEAN NOT NULL DEFAULT true,
     PRIMARY KEY(id),
     FOREIGN KEY(credencial) REFERENCES credencial(id) ON DELETE CASCADE,
     FOREIGN KEY(idVotacion) REFERENCES votacion(id) ON DELETE CASCADE ON UPDATE CASCADE,
