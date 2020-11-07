@@ -1,14 +1,11 @@
-const fs = require('fs');
 const express = require('express');
 const { ExpressPeerServer } = require('peer');
 const app = express();
-var httpsRest;
-const appsocket = express();
-const appPeer = express();
-var httpsPeer; 
+const httpserver = require('http').createServer(app);
 const cors = require('cors');
 const validadores = require('./validadores');
-//const server = require('http').createServer(app);
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 const cifrado = require('./cifrado');
 const torneo = require('./Torneo/logicaTorneo');
 const seudonimo = require('./Seudonimos/seudonimo');
@@ -19,82 +16,6 @@ var tiempoSigTorneo=10000;
 const votosRegistrados = new Map() //key: hash voto, value: seudonimo;
 
 //Listener por socket.io ------------------
-
-
-//--CONFIGURACION DEL SERVIDOR Y PUERTOS------
-app.use(cors());
-
-var optionsHttps = {
-    key: fs.readFileSync('ssl.key/private.key'),
-    cert: fs.readFileSync('ssl.crt/certificate.crt')
-}
-var origins = 'https://pocketballotchain.webhop.me:*';
-
-const listenerPort = process.env.PORTLISTENER || 4000;
-
-var httpsSocketApp = require('https').createServer(optionsHttps, function(req, res){
-    res.setHeader('Access-Control-Allow-Origin', origins);
-    res.setHeader('Access-Control-Request-Method', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
-    res.setHeader('Access-Control-Allow-Headers', '*');
-    if ( req.method === 'OPTIONS' || req.method === 'GET' ) {
-        res.writeHead(200);
-        res.end();
-        return;
-    }
-});
-
-var io = require('socket.io')(httpsSocketApp);
-httpsSocketApp.listen(listenerPort, function(){
-    console.log("Socket listening on port : " + listenerPort);
-});
-
-//Fin Listener por socket.io
-
-var httpsServer = require('https').createServer(optionsHttps, app);
-const peerServer = ExpressPeerServer(httpsServer, {
-    debug: true,
-    path: '/'
-});
-const peer_port = process.env.PORTPEER || 5000;
-
-httpsServer.listen(peer_port, function () {
-    console.log("listening peer connections on : " + peer_port);
-});
-
-//--CONFIGURACION Y FUNCIONES REST--------
-
-//Configuracion acceso
-var httpsRest = require('https');
-httpsRest.createServer(optionsHttps, app).listen(3000, function(){
-    console.log('REST en ' + 3000);
-});
-//Middlewares
-app.use(express.json());
-//PeerJs
-app.use('/peerjs', peerServer);
-//Rutas
-app.use(require('./routes/employees'));
-app.use(require('./routes/votacion'));
-app.use(require('./routes/grupo'));
-app.use(require('./routes/participante'));
-app.use(require('./routes/opcion'));
-app.use(require('./routes/credencial'));
-app.use(require('./routes/usuario'));
-app.use(require('./routes/tipoVotacion'));
-app.use(require('./routes/validador'));
-app.use(require('./routes/votar'));
-app.use(require('./routes/resultados'));
-app.use(require('./routes/alias'));
-
-// ---FUNCIONES SOCKET IO-----------------
-
-
-io.on('disconnect', () => {
-    console.log('Algo se desconecto');
-});
-
-
 io.on('connection', (socket) => {
     console.log('Nueva coneccion');
     socket.emit('voto', 'ListenerEstablecido');
@@ -132,8 +53,52 @@ io.on('connection', (socket) => {
     //--------------------------------------------------------
 });
 
+io.on('disconnect', () => {
+    console.log('Algo se desconecto');
+});
 
-//----FUNCIONES PEERJS---------------------------
+const listenerPort = process.env.PORTLISTENER || 4000;
+server.listen(listenerPort, function(){
+    console.log("Socket listening on port : " + listenerPort);
+});
+//Fin Listener por socket.io
+
+
+const peerServer = ExpressPeerServer(httpserver, {
+    debug: true,
+    path: '/'
+});
+ 
+const peer_port = process.env.PORTPEER || 5000;
+
+httpserver.listen(peer_port, function () {
+    console.log("listening peer connections on : " + peer_port);
+});
+
+//Configuracion acceso
+app.set('port', process.env.PORT || 3000);
+//Middlewares
+app.use(cors());
+app.use(express.json());
+//PeerJs
+app.use('/peerjs', peerServer);
+//Rutas
+app.use(require('./routes/employees'));
+app.use(require('./routes/votacion'));
+app.use(require('./routes/grupo'));
+app.use(require('./routes/participante'));
+app.use(require('./routes/opcion'));
+app.use(require('./routes/credencial'));
+app.use(require('./routes/usuario'));
+app.use(require('./routes/tipoVotacion'));
+app.use(require('./routes/validador'));
+app.use(require('./routes/votar'));
+app.use(require('./routes/resultados'));
+app.use(require('./routes/alias'));
+//Iniciar
+app.listen(3000, () =>{
+    console.log('Server on port', app.get('port'))
+});
 
 peerServer.on('connection', (client) => {
     console.log('Validador conectado');
@@ -145,8 +110,6 @@ peerServer.on('disconnect', (client) => {
     validadores.eliminarValidador(client.getId());
 });
 
-// --------------------------------------
-
 deleteValidadores().then(() => {torneo.iniciarTorneo(io)});
 
 async function deleteValidadores() {
@@ -156,6 +119,34 @@ async function deleteValidadores() {
         console.log(error);
     }
 }
+
+/* async function emitirVoto(data){
+    try {
+        if (await comprobarVotosDisponibles(data['usuario'], data['idVotacion'])){
+            data['alias'] = await asignarSeudonimo(data);
+            io.emit('voto', data);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function comprobarVotosDisponibles(nombre, idVotacion){
+    let votosDisponibles = await seudonimo.obtenerVotos(nombre, idVotacion);
+    if (votosDisponibles > 0){
+        return true;
+    }
+    return false;
+}
+
+async function asignarSeudonimo(data) {
+    let idVoto = data['idVoto'];
+    let idVotacion = data['idVotacion'];
+    return await seudonimo.calcularSeudonimo(idVotacion, idVoto);
+} */
+
+
+// --------------------------------------
 
 async function obtenerSeudonimo(data) {
     let idVotacion = data['idVotacion'];

@@ -16,7 +16,7 @@ var reportados = null;
 var castigo = 10;
 var recompensa = 10;
 
-const validadoresDefault = ["rockbandicoot", "1bandicoot"]
+const validadoresDefault = ["rockbandicoot", "diego", "brandonn", "briam", "admin"];
 
 function revisarConfirmaciones() {
   const hash = confirmarHash();
