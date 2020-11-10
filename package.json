@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "start-local": "nodemon src/index_con_http.js"
+    "test": "nodemon src/index_con_http.js"
   },
   "author": "",
   "license": "ISC",

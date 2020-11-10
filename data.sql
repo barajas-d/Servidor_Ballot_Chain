@@ -51,7 +51,7 @@ CREATE TABLE votacion(
     fechaLimite DATETIME,
     plantillaAsociada INT DEFAULT NULL,
     tipoDeVotacion INT NOT NULL,
-    descripcion VARCHAR(200) DEFAULT NULL,
+    descripcion VARCHAR(10000) DEFAULT NULL,
     votos INT DEFAULT 1,
     PRIMARY KEY(id),
     FOREIGN KEY(autor) REFERENCES usuario(nombre) ON UPDATE CASCADE ON DELETE CASCADE,
